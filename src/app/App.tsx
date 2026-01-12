@@ -1,6 +1,9 @@
 // import { useState } from 'react';
 // import { useParams, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+
+import coupleImg from '/images/couple.png';
 
 function App() {
   const { search } = useLocation();
@@ -8,7 +11,7 @@ function App() {
   const name = params.get('name');
 
   return (
-    <div className="relative w-full px-18">
+    <div className="relative mx-auto w-full max-w-350 px-18">
       <header className="flex w-full flex-col items-stretch border-b pt-10 after:mt-2 after:mb-1 after:w-full after:border-b">
         <h3 className="font-poppins mb-4 text-center text-black/60 uppercase">John Vicencio - Jaynifer Sagana</h3>
         <div className="relative">
@@ -37,6 +40,17 @@ function App() {
           </div>
         </div>
       </header>
+      <main className="border">
+        <section className="flex">
+          <div className="grow-12 border">
+            <div className="flex">
+              <div className="w-1 shrink grow-2">This is some text</div>
+              <img src={coupleImg} className="w-1 shrink grow-3" />
+            </div>
+          </div>
+          <div className="grow-5 border">test</div>
+        </section>
+      </main>
       <h1 className="mt-10 w-full text-center text-3xl font-bold">
         Your name is: <span className="capitalize">{name}</span>
       </h1>
