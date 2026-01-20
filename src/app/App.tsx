@@ -2,6 +2,7 @@ import { MouseEvent, useState } from 'react';
 // import { useParams, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { format } from 'date-fns';
 
 import { Quote } from 'lucide-react';
 import highlightImg from '/highlight.svg';
@@ -96,6 +97,31 @@ function RSVP() {
   );
 }
 
+function Countdown() {
+  const [rerender, setRerender] = useState(false);
+  const [end, setEnd] = useState(new Date(2026, 7, 29).getTime());
+  const now = new Date().getTime();
+  const remaining = end - now;
+
+  const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
+  const months = Math.floor(remaining / (1000 * 60 * 60 * 24 * 12));
+
+  console.log(months);
+
+  useEffect(() => {
+    setInterval(() => {
+      setRerender((prev) => !prev);
+    }, 1000);
+  }, []);
+
+  return (
+    <div className="flex flex-col">
+      <h3>Days Left 'till Forever</h3>
+      <p>{new Date().getTime()}</p>
+    </div>
+  );
+}
+
 function App() {
   const { search } = useLocation();
   const params = new URLSearchParams(search);
@@ -158,8 +184,6 @@ function App() {
               <img src={coupleImg} className="w-full shrink grow-3 lg:w-1" />
             </div>
             <RSVP />
-
-            {/* <div className="border-divider flex items-start gap-4 border-t pt-4"></div> */}
           </div>
           <div className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
             <div>
@@ -193,6 +217,9 @@ function App() {
               </div>
             ))}
           </div>
+        </section>
+        <section className="flex items-center border-b py-8">
+          <Countdown />
         </section>
         <section className="flex flex-col border-b py-8 md:grid md:grid-cols-17">
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
