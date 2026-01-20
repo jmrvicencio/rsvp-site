@@ -1,4 +1,4 @@
-// import { useState } from 'react';
+import { MouseEvent, useState } from 'react';
 // import { useParams, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -9,6 +9,8 @@ import coupleImg from '/images/couple.png';
 import coupleImg2 from '/images/couple2.png';
 import donBoscoImg from '/images/don_bosco.png';
 import arugaImg from '/images/aruga.png';
+import storyOfUsImg from '/images/story-of-us.png';
+import rsvpRImg from '/images/RSVP-R.png';
 
 const timeline = [
   ['1:00 pm', 'ceremony'],
@@ -17,6 +19,82 @@ const timeline = [
   ['5:30 pm', 'reception'],
   ['8:00 pm', 'final send-off'],
 ];
+
+const invitees = [{ name: 'Eduardo Alde, Jr' }, { name: 'Corazon Alde' }];
+
+function RSVP() {
+  const [reply, setReply] = useState<Record<number, string>>({});
+
+  const handleRsvpClicked = (i: number, id: string) => () => {
+    // debugger;
+    const nextReply = { ...reply };
+    nextReply[i] = id;
+
+    setReply(nextReply);
+  };
+
+  return (
+    <div className="border-divider flex w-full flex-col items-start justify-stretch gap-4 border-t p-8 pt-12 lg:flex-row">
+      <div
+        className="font-poppins text-rsvp relative w-full border border-[#E8E3E3] bg-[#F5F0F0] bg-contain p-16 pt-14"
+        style={{
+          backgroundImage: `url('${rsvpRImg}')`,
+          backgroundPosition: 'top right',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: '200px',
+        }}
+      >
+        <h3 className="font-libre-baskerville mb-5 text-7xl font-semibold capitalize">RSVP</h3>
+        <h4 className="font-playfair -mt-6 mb-16">Please kindly reply by July 29</h4>
+        <div>
+          <form className="flex flex-col items-center">
+            {invitees.map(({ name }, i) => (
+              <div className="w-full not-first:mt-8">
+                <div className="border-items flex items-end border-b">
+                  <p className="font-bold">M</p>
+                  <p className="font-alex-brush grow text-center text-4xl">{name}</p>
+                </div>
+                <div className="mt-4 flex justify-center gap-8">
+                  <label htmlFor={`rsvp-${i}-y`} className="flex cursor-pointer items-center gap-2">
+                    <input
+                      id={`rsvp-${i}-y`}
+                      className="peer hidden"
+                      type="radio"
+                      name={`rsvp-${i}`}
+                      value="yes"
+                      onClick={handleRsvpClicked(i, `rsvp-${i}-y`)}
+                      checked={reply[i] == `rsvp-${i}-y`}
+                    />
+                    <div className="h-4 w-4 rounded-full border p-0.5">
+                      {reply[i] == `rsvp-${i}-y` && <div className="h-full w-full rounded-full bg-black" />}
+                    </div>
+                    Accepts Gladly
+                  </label>
+                  <label htmlFor={`rsvp-${i}-n`} className="flex cursor-pointer items-center gap-2">
+                    <input
+                      id={`rsvp-${i}-n`}
+                      className="peer hidden"
+                      type="radio"
+                      name={`rsvp-${i}`}
+                      value="no"
+                      onClick={handleRsvpClicked(i, `rsvp-${i}-n`)}
+                      checked={reply[i] == `rsvp-${i}-n`}
+                    />
+                    <div className="h-4 w-4 rounded-full border p-0.5">
+                      {reply[i] == `rsvp-${i}-n` && <div className="h-full w-full rounded-full bg-black" />}
+                    </div>
+                    Decline Regretfully
+                  </label>
+                </div>
+              </div>
+            ))}
+            <input type="button" value="Send Reply" className="mt-8 cursor-pointer border p-4 py-2" />
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function App() {
   const { search } = useLocation();
@@ -79,23 +157,9 @@ function App() {
               </div>
               <img src={coupleImg} className="w-full shrink grow-3 lg:w-1" />
             </div>
-            <div className="border-divider flex items-start gap-4 border-t pt-10">
-              <div className="text-items font-poppins w-1 shrink grow-2">
-                <h3 className="font-libre-baskerville mb-5 text-2xl font-semibold text-black capitalize">
-                  You're Cordially Invited To Share The Couple's Special Day
-                </h3>
-                <p>
-                  Dear <span className="font-bold text-black">Tito Jun & Coco</span>, the couple would love it if you could make it to their
-                  wedding on <span className="font-bold text-black">August 29, 2026</span>
-                </p>
-                <div className="border-divider my-5 border-l pl-4">
-                  <Quote className="w-4 stroke-black/40" />
-                  <p>I don't think we'd be able stop crying if they couldn't make it</p>
-                </div>
-                <p>The couple was quoted saying.</p>
-              </div>
-              <img src={coupleImg2} className="h-auto w-1 shrink grow-3 bg-cover" />
-            </div>
+            <RSVP />
+
+            {/* <div className="border-divider flex items-start gap-4 border-t pt-4"></div> */}
           </div>
           <div className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
             <div>
@@ -128,6 +192,76 @@ function App() {
                 <p className="text-lg uppercase">{event}</p>
               </div>
             ))}
+          </div>
+        </section>
+        <section className="flex flex-col border-b py-8 md:grid md:grid-cols-17">
+          <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
+            <div className="mb-10 flex flex-col items-start gap-4 lg:flex-row">
+              <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
+                <h3 className="font-libre-baskerville mb-5 text-2xl font-semibold text-black capitalize">
+                  You're Cordially Invited To Share The Couple's Special Day
+                </h3>
+                <p>
+                  Dear <span className="relative bg-yellow-200 font-bold text-black">Tito Jun & Coco</span>, the couple would love it if you
+                  could make it to their wedding on <span className="font-bold text-black">August 29, 2026</span>
+                </p>
+                <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
+                  <p className="text-sm text-blue-900 underline">Jump to RSVP</p>
+                </a>
+                <div className="border-divider my-5 border-l pl-4">
+                  <Quote className="w-4 stroke-black/40" />
+                  <p>I don't think we'd be able stop crying if they couldn't make it</p>
+                </div>
+                <p>The couple was quoted saying.</p>
+              </div>
+              <img src={coupleImg} className="w-full shrink grow-3 lg:w-1" />
+            </div>
+
+            {/* <div className="border-divider flex items-start gap-4 border-t pt-4"></div> */}
+            <div className="border-divider flex flex-col items-start gap-4 border-t pt-8 lg:flex-row">
+              <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
+                <h3 className="font-libre-baskerville mb-5 flex flex-col justify-center text-center text-5xl/11 font-extrabold text-black capitalize">
+                  The
+                  <br />
+                  <span className="">Journey</span>
+                  <br />
+                  <span className="flex flex-row justify-center gap-2">
+                    <span className="font-alex-brush font-normal lowercase">of</span>Us
+                  </span>
+                </h3>
+                <div className="flex flex-col gap-4">
+                  <p>
+                    It began with curiosity. While talking with his friend, John heard a name he never heard before: “Jaynifer”. That
+                    curiosity grew into a connection.
+                  </p>
+                  <p>
+                    A movie date watching “The Good Dinosaur” marked the start of their relationship (A good date, a bad movie..) They grew
+                    through school and chose to graduate in the same year. They had their share of challenges and arguments early on, but
+                    over time, they learned and grew together. And now, ten years later, continue life side by side. From everyday moments
+                    to adventures near and far, they keep choosing each other with laughter, creativity, and trust.
+                  </p>
+                </div>
+              </div>
+              <img src={storyOfUsImg} className="w-full shrink grow-3 lg:w-1" />
+            </div>
+          </div>
+          <div className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
+            <div>
+              <img src={donBoscoImg} />
+              <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
+              <p>Don Bosco Chapel Makati</p>
+              <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
+                <p className="text-sm text-blue-900 underline">Google Maps Link</p>
+              </a>
+            </div>
+            <div className="mt-8">
+              <img src={arugaImg} />
+              <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
+              <p>Aruga Apartments by Rockwell</p>
+              <a href="https://maps.app.goo.gl/cvjaYGtsLuF3TuXp6">
+                <p className="text-sm text-blue-900 underline">Google Maps Link</p>
+              </a>
+            </div>
           </div>
         </section>
       </main>
