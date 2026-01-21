@@ -2,7 +2,7 @@ import { MouseEvent, useState } from 'react';
 // import { useParams, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, getDaysInMonth } from 'date-fns';
 
 import { Quote } from 'lucide-react';
 import highlightImg from '/highlight.svg';
@@ -50,7 +50,7 @@ function RSVP() {
         <div>
           <form className="flex flex-col items-center">
             {invitees.map(({ name }, i) => (
-              <div className="w-full not-first:mt-8">
+              <div key={i} className="w-full not-first:mt-8">
                 <div className="border-items flex items-end border-b">
                   <p className="font-bold">M</p>
                   <p className="font-alex-brush grow text-center text-4xl">{name}</p>
@@ -97,28 +97,120 @@ function RSVP() {
   );
 }
 
+function Timeline() {
+  return (
+    <section className="flex items-center border-b py-8">
+      <h3 className="font-playfair-display mr-8 px-12 text-center text-4xl font-bold italic sm:px-0 sm:text-2xl">
+        Wedding <br />
+        Timeline
+      </h3>
+      <div className="font-playfair grid w-full grid-cols-1 gap-8 text-xl sm:grid-cols-3 lg:flex">
+        {timeline.map(([time, event], i) => (
+          <div key={i} className="flex grow flex-col items-center text-center">
+            <p className="font-libre-baskerville font-bold">{time}</p>
+            <p className="text-lg uppercase">{event}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 function Countdown() {
-  const [rerender, setRerender] = useState(false);
-  const [end, setEnd] = useState(new Date(2026, 7, 29).getTime());
-  const now = new Date().getTime();
-  const remaining = end - now;
-
-  const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
-  const months = Math.floor(remaining / (1000 * 60 * 60 * 24 * 12));
-
-  console.log(months);
+  const [year, setYear] = useState(0);
+  const [month, setMonth] = useState(0);
+  const [day, setDay] = useState(0);
+  const [hour, setHour] = useState(0);
+  const [minute, setMinute] = useState(0);
+  const [second, setSecond] = useState(0);
+  // const [endDate] = useState(new Date(2026, 1, 5, 20, 51, 20));
+  const [endDate] = useState(new Date(2026, 7, 29, 14));
 
   useEffect(() => {
-    setInterval(() => {
-      setRerender((prev) => !prev);
-    }, 1000);
+    const updateCountdown = () => {
+      const now = new Date();
+      if (now >= endDate) {
+        setYear(0);
+        setMonth(0);
+        setDay(0);
+        setHour(0);
+        setMinute(0);
+        setSecond(0);
+        return;
+      }
+
+      let years = endDate.getFullYear() - now.getFullYear();
+      let months = endDate.getMonth() - now.getMonth();
+      let days = endDate.getDate() - now.getDate();
+      let hours = endDate.getHours() - now.getHours();
+      let minutes = endDate.getMinutes() - now.getMinutes();
+      let seconds = endDate.getSeconds() - now.getSeconds();
+
+      if (seconds < 0) {
+        seconds += 60;
+        minutes -= 1;
+      }
+      if (minutes < 0) {
+        minutes += 60;
+        hours -= 1;
+      }
+      if (hours < 0) {
+        hours += 24;
+        days -= 1;
+      }
+      if (days < 0) {
+        const previousMonth = (now.getMonth() - 1 + 12) % 12;
+        const daysInPreviousMonth = getDaysInMonth(new Date(now.getFullYear(), previousMonth));
+        days += daysInPreviousMonth;
+        months -= 1;
+      }
+      if (months < 0) {
+        months += 12;
+        years -= 1;
+      }
+
+      setYear(years);
+      setMonth(months);
+      setDay(days);
+      setHour(hours);
+      setMinute(minutes);
+      setSecond(seconds);
+    };
+
+    const interval = setInterval(updateCountdown, 1000);
+    return () => clearInterval(interval);
   }, []);
 
+  console.log(` ${year}, ${month}, ${day}, ${hour}, ${minute}, ${second}`);
+
   return (
-    <div className="flex flex-col">
-      <h3>Days Left 'till Forever</h3>
-      <p>{new Date().getTime()}</p>
-    </div>
+    <section className="flex items-center border-b py-8">
+      <div className="flex w-full flex-col gap-4">
+        <h3 className="font-playfair-display mr-8 px-12 text-center text-4xl font-bold italic sm:px-0 sm:text-2xl">Days until Forever</h3>
+        <div className="flex w-full items-center justify-center gap-12">
+          <div className="flex flex-col items-center">
+            <p className="text-4xl font-bold">{month}</p>
+            <p className="font-playfair uppercase">Months</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <p className="text-4xl font-bold">{day}</p>
+            <p className="font-playfair uppercase">Days</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <p className="text-4xl font-bold">{hour}</p>
+            <p className="font-playfair uppercase">Hours</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <p className="text-4xl font-bold">{minute}</p>
+            <p className="font-playfair uppercase">Minutes</p>
+          </div>
+          <div className="flex flex-col items-center">
+            <p className="text-4xl font-bold">{second}</p>
+            <p className="font-playfair uppercase">Seconds</p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -204,23 +296,8 @@ function App() {
             </div>
           </div>
         </section>
-        <section className="flex items-center border-b py-8">
-          <h2 className="font-playfair-display mr-8 px-12 text-center text-4xl font-bold italic sm:px-0 sm:text-2xl">
-            Wedding <br />
-            Timeline
-          </h2>
-          <div className="font-playfair grid w-full grid-cols-1 gap-8 text-xl sm:grid-cols-3 lg:flex">
-            {timeline.map(([time, event]) => (
-              <div className="flex grow flex-col items-center text-center">
-                <p className="font-libre-baskerville font-bold">{time}</p>
-                <p className="text-lg uppercase">{event}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-        <section className="flex items-center border-b py-8">
-          <Countdown />
-        </section>
+        <Timeline />
+        <Countdown />
         <section className="flex flex-col border-b py-8 md:grid md:grid-cols-17">
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
             <div className="mb-10 flex flex-col items-start gap-4 lg:flex-row">
