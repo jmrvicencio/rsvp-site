@@ -12,9 +12,15 @@ import donBoscoImg from '/images/don_bosco.png';
 import arugaImg from '/images/aruga.png';
 import storyOfUsImg from '/images/story-of-us.png';
 import rsvpRImg from '/images/RSVP-R.png';
+import flourishR from '/images/flourish-r.svg';
+import flourishL from '/images/flourish-l.svg';
+
+import brownImg from '/images/brown.png';
+import greenImg from '/images/green.png';
+import mushroomImg from '/images/mushroom.png';
 
 const timeline = [
-  ['1:00 pm', 'ceremony'],
+  ['2:00 pm', 'ceremony'],
   ['3:30 pm', 'photo taking'],
   ['4:30 pm', 'cocktail hour'],
   ['5:30 pm', 'reception'],
@@ -66,8 +72,8 @@ function RSVP() {
                       onClick={handleRsvpClicked(i, `rsvp-${i}-y`)}
                       checked={reply[i] == `rsvp-${i}-y`}
                     />
-                    <div className="h-4 w-4 rounded-full border p-0.5">
-                      {reply[i] == `rsvp-${i}-y` && <div className="h-full w-full rounded-full bg-black" />}
+                    <div className="aspect-square h-4 w-4 rounded-full border p-0.5">
+                      {reply[i] == `rsvp-${i}-y` && <div className="aspect-square h-full w-full rounded-full bg-black" />}
                     </div>
                     Accepts Gladly
                   </label>
@@ -81,8 +87,8 @@ function RSVP() {
                       onClick={handleRsvpClicked(i, `rsvp-${i}-n`)}
                       checked={reply[i] == `rsvp-${i}-n`}
                     />
-                    <div className="h-4 w-4 rounded-full border p-0.5">
-                      {reply[i] == `rsvp-${i}-n` && <div className="h-full w-full rounded-full bg-black" />}
+                    <div className="aspect-square h-4 w-4 rounded-full border p-0.5">
+                      {reply[i] == `rsvp-${i}-n` && <div className="aspect-square h-full w-full rounded-full bg-black" />}
                     </div>
                     Decline Regretfully
                   </label>
@@ -99,7 +105,7 @@ function RSVP() {
 
 function Timeline() {
   return (
-    <section className="flex items-center border-b py-8">
+    <section className="border-divider flex items-center border-b py-8">
       <h3 className="font-playfair-display mr-8 px-12 text-center text-4xl font-bold italic sm:px-0 sm:text-2xl">
         Wedding <br />
         Timeline
@@ -181,10 +187,8 @@ function Countdown() {
     return () => clearInterval(interval);
   }, []);
 
-  console.log(` ${year}, ${month}, ${day}, ${hour}, ${minute}, ${second}`);
-
   return (
-    <section className="flex items-center border-b py-8">
+    <section className="border-divider flex items-center border-b py-8">
       <div className="flex w-full flex-col gap-4">
         <h3 className="font-playfair-display mr-8 px-12 text-center text-4xl font-bold italic sm:px-0 sm:text-2xl">Days until Forever</h3>
         <div className="flex w-full items-center justify-center gap-12">
@@ -253,11 +257,11 @@ function App() {
         <h1 className="font-playfair-display my-8 text-center text-[clamp(1rem,10cqw,200rem)] font-bold sm:text-[clamp(1rem,6cqw,200rem)]">
           John & Jayni <br className="sm:hidden" /> Getting Married!
         </h1>
-        <section className="flex flex-col border-y py-8 md:grid md:grid-cols-17">
+        <section className="border-divider flex flex-col border-y py-8 md:grid md:grid-cols-17">
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
             <div className="mb-10 flex flex-col items-start gap-4 lg:flex-row">
               <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
-                <h3 className="font-libre-baskerville mb-5 text-2xl font-semibold text-black capitalize">
+                <h3 className="font-libre-baskerville mb-5 text-4xl font-semibold text-black capitalize">
                   You're Cordially Invited To Share The Couple's Special Day
                 </h3>
                 <p>
@@ -297,31 +301,137 @@ function App() {
           </div>
         </section>
         <Timeline />
+        <section className="border-divider border-b py-8">
+          <div className="font-playfair border-rsvp mx-auto grid max-w-3xl border px-8 text-center text-2xl font-bold">
+            <div className="border-divider border-b py-8">
+              <div className="mb-10 flex w-full flex-row items-center justify-center gap-2">
+                <img src={flourishL} />
+                <div className="font-light">
+                  <h3 className="uppercase">Primary Sponsors</h3>
+                  <p className="text-sm leading-2">to stand witness to our vows</p>
+                </div>
+                <img src={flourishR} />
+              </div>
+              <div className="grid grid-flow-dense grid-cols-2 gap-x-8 gap-y-6">
+                <div className="col-span-1 text-right">
+                  <h4 className="text-lg font-light uppercase">Ninongs</h4>
+                  <p>Ricky Cano</p>
+                  <p>Eduardo Alde, Jr</p>
+                  <p>John Fernandez</p>
+                  <p>Alfredo Reyes</p>
+                  <p>Abelardo Pagsibigay, Jr.</p>
+                </div>
+                <div className="col-span-1 text-left">
+                  <h4 className="text-lg font-light uppercase">Ninongs</h4>
+                  <p>Ayeen Vicencio</p>
+                  <p>Ma. Cristina Aguas</p>
+                  <p>Filipina Sagana</p>
+                  <p>Paz Nama</p>
+                  <p>Carolyn Chin</p>
+                </div>
+                <div className="col-span-1 text-right">
+                  <h4 className="text-lg font-light uppercase">Best Man</h4>
+                  <p>TBA</p>
+                </div>
+                <div className="col-span-1 text-left">
+                  <h4 className="text-lg font-light uppercase">Man of Honor</h4>
+                  <p>Jayms Sagana</p>
+                </div>
+              </div>
+            </div>
+            <div className="py-8">
+              <div className="mb-10 flex w-full flex-row items-center justify-center gap-2">
+                <img src={flourishL} />
+                <div className="font-light">
+                  <h3 className="uppercase">Secondary Sponsors</h3>
+                  <p className="text-sm leading-2">to assist with our needs</p>
+                </div>
+                <img src={flourishR} />
+              </div>
+              <div className="grid grid-flow-dense grid-cols-2 gap-x-8 gap-y-6">
+                <div className="col-span-2">
+                  <h4 className="text-lg font-light uppercase">Veil</h4>
+                  <p>Marlon Demafeliz</p>
+                  <p>Barbie Olegario</p>
+                </div>
+                <div className="col-span-2">
+                  <h4 className="text-lg font-light uppercase">Cord</h4>
+                  <p>Erik Ramos</p>
+                  <p>Renee Ramos</p>
+                </div>
+                <div className="col-span-2">
+                  <h4 className="text-lg font-light uppercase">Candle</h4>
+                  <p>Julian Nepomuceno</p>
+                  <p>Sophia Nuñez</p>
+                </div>
+                <div className="col-span-1 text-right">
+                  <h4 className="text-lg font-light uppercase">Ninongs</h4>
+                  <p>Marlon Demafeliz</p>
+                  <p>Julian Nepomuceno</p>
+                  <p>Nestor Joble</p>
+                  <p>Erik Ramos</p>
+                </div>
+                <div className="col-span-1 text-left">
+                  <h4 className="text-lg font-light uppercase">Ninongs</h4>
+                  <p>Barbie Olegario</p>
+                  <p>Sophia Nuñez</p>
+                  <p>Helen Grace Danseco</p>
+                  <p>Renee Ramos</p>
+                </div>
+                <div className="col-span-1 text-center">
+                  <h4 className="text-lg font-light uppercase">Coin Bearer</h4>
+                  <p>TBA</p>
+                </div>
+                <div className="col-span-1 text-center">
+                  <h4 className="text-lg font-light uppercase">Bible Bearer</h4>
+                  <p>TBA</p>
+                </div>
+                <div className="col-span-1 text-center">
+                  <h4 className="text-lg font-light uppercase">Ring Bearer</h4>
+                  <p>Eli Reyes</p>
+                </div>
+                <div className="col-span-1 text-center">
+                  <h4 className="text-lg font-light uppercase">Flower Girls</h4>
+                  <p>Bridgette Sagana</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
         <Countdown />
-        <section className="flex flex-col border-b py-8 md:grid md:grid-cols-17">
+        <section className="border-divider flex flex-col border-b py-8 md:grid md:grid-cols-17">
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
             <div className="mb-10 flex flex-col items-start gap-4 lg:flex-row">
               <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
-                <h3 className="font-libre-baskerville mb-5 text-2xl font-semibold text-black capitalize">
-                  You're Cordially Invited To Share The Couple's Special Day
-                </h3>
-                <p>
-                  Dear <span className="relative bg-yellow-200 font-bold text-black">Tito Jun & Coco</span>, the couple would love it if you
-                  could make it to their wedding on <span className="font-bold text-black">August 29, 2026</span>
-                </p>
-                <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
-                  <p className="text-sm text-blue-900 underline">Jump to RSVP</p>
-                </a>
-                <div className="border-divider my-5 border-l pl-4">
-                  <Quote className="w-4 stroke-black/40" />
-                  <p>I don't think we'd be able stop crying if they couldn't make it</p>
+                <h3 className="font-libre-baskerville text-5xl font-semibold text-black capitalize">Our Colors</h3>
+                <p className="font-libre-baskerville mb-5 text-2xl italic">Olive Garden</p>
+                <div className="-gap-5 flex">
+                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#818252]" />
+                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#575628]" />
+                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#5D4D36]" />
+                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#B8AD9B]" />
+                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#E3D3BC]" />
                 </div>
-                <p>The couple was quoted saying.</p>
+                <p className="mt-6 text-lg font-semibold">Earth-inspired greens and browns </p>
+                <p>simple, natural, and full of warmth.</p>
               </div>
-              <img src={coupleImg} className="w-full shrink grow-3 lg:w-1" />
+
+              <div className="flex aspect-4/3 h-full w-1 grow-3 flex-row justify-stretch">
+                <div
+                  className="h-full w-1 grow-2 bg-cover bg-center transition-all duration-350 ease-in-out hover:grow-3"
+                  style={{ backgroundImage: `url('${brownImg}')` }}
+                />
+                <div
+                  className="h-full w-1 grow-2 bg-cover bg-center transition-all duration-350 ease-in-out hover:grow-3"
+                  style={{ backgroundImage: `url('${greenImg}')` }}
+                />
+                <div
+                  className="h-full w-1 grow-2 bg-cover bg-center transition-all duration-350 ease-in-out hover:grow-3"
+                  style={{ backgroundImage: `url('${mushroomImg}')` }}
+                />
+              </div>
             </div>
 
-            {/* <div className="border-divider flex items-start gap-4 border-t pt-4"></div> */}
             <div className="border-divider flex flex-col items-start gap-4 border-t pt-8 lg:flex-row">
               <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
                 <h3 className="font-libre-baskerville mb-5 flex flex-col justify-center text-center text-5xl/11 font-extrabold text-black capitalize">
@@ -341,8 +451,14 @@ function App() {
                   <p>
                     A movie date watching “The Good Dinosaur” marked the start of their relationship (A good date, a bad movie..) They grew
                     through school and chose to graduate in the same year. They had their share of challenges and arguments early on, but
-                    over time, they learned and grew together. And now, ten years later, continue life side by side. From everyday moments
-                    to adventures near and far, they keep choosing each other with laughter, creativity, and trust.
+                    over time, they learned and grew together.
+                  </p>
+                  <p>
+                    One day, a little curious and teasing, Jayni asked John when he was going to 'pop the question'. John was planning to do
+                    it on their first trip abroad, but with no tickets yet booked, he panicked and said "Before 30", accidentally not
+                    specifying if he meant his 30th or her 30th. That ambiguity was answered on May 4, 2025, 1 day before John turned 30
+                    when he finally propsed to Jayni in Singapore. And now after ten years, they continue life side by side. From everyday
+                    moments to adventures near and far, they keep choosing each other with laughter, creativity, and trust.
                   </p>
                 </div>
               </div>
@@ -369,9 +485,11 @@ function App() {
           </div>
         </section>
       </main>
-      <h1 className="mt-10 w-full text-center text-3xl font-bold">
-        Your name is: <span className="capitalize">{name}</span>
-      </h1>
+      <footer className="font-poppins text-items py-8 text-xs">
+        <p>
+          <span className="font-semibold">© 2026</span> John Vicencio. All Rights Reserved
+        </p>
+      </footer>
     </div>
   );
 }
