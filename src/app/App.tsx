@@ -18,6 +18,7 @@ import flourishL from '/images/flourish-l.svg';
 import brownImg from '/images/brown.png';
 import greenImg from '/images/green.png';
 import mushroomImg from '/images/mushroom.png';
+import { useGuest } from '@/features/guests/hooks/useGuest';
 
 const timeline = [
   ['2:00 pm', 'ceremony'],
@@ -30,6 +31,13 @@ const timeline = [
 const invitees = [{ name: 'Eduardo Alde, Jr' }, { name: 'Corazon Alde' }];
 
 function RSVP() {
+  const { search } = useLocation();
+  const query = new URLSearchParams(search);
+  const guestId = query.get('id');
+  const { guest } = useGuest(guestId);
+
+  // console.log(guest);
+
   const [reply, setReply] = useState<Record<number, string>>({});
 
   const handleRsvpClicked = (i: number, id: string) => () => {
