@@ -69,7 +69,7 @@ function RSVP() {
                       type="radio"
                       name={`rsvp-${i}`}
                       value="yes"
-                      onClick={handleRsvpClicked(i, `rsvp-${i}-y`)}
+                      onChange={handleRsvpClicked(i, `rsvp-${i}-y`)}
                       checked={reply[i] == `rsvp-${i}-y`}
                     />
                     <div className="aspect-square h-4 w-4 rounded-full border p-0.5">
@@ -84,7 +84,7 @@ function RSVP() {
                       type="radio"
                       name={`rsvp-${i}`}
                       value="no"
-                      onClick={handleRsvpClicked(i, `rsvp-${i}-n`)}
+                      onChange={handleRsvpClicked(i, `rsvp-${i}-n`)}
                       checked={reply[i] == `rsvp-${i}-n`}
                     />
                     <div className="aspect-square h-4 w-4 rounded-full border p-0.5">

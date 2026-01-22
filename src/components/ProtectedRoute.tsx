@@ -22,7 +22,7 @@ function ProtectedRoute({ children }: { children?: ReactNode }) {
   // Check if user is admin
   useEffect(() => {
     if (!user) {
-      navigate('/');
+      if (!loading) navigate('/');
       return;
     }
 
