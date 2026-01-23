@@ -9,7 +9,7 @@ import monogram from '/images/monogram.svg';
 import { auth } from '@/lib/firebase/auth';
 import { useAtom } from 'jotai';
 import { useGuests } from '@/features/dashboard/hooks/useGuests';
-import { Link as LinkIcon } from 'lucide-react';
+import { Link as LinkIcon, ChevronsUpDown, ArrowDown } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 function AddGuestOverlay() {
@@ -195,11 +195,11 @@ function Dashboard() {
   return (
     <>
       {overlay && <Overlay />}
-      <div className="font-playfair text-items min-h-dvh w-full">
+      <div className="font-poppins text-items min-h-dvh w-full bg-white">
         <div className="mx-auto flex min-h-dvh w-full max-w-280 items-stretch">
           <div className="border-divider grow border-x pt-12">
             <div className="flex items-end justify-between px-8">
-              <h1 className="text-4xl font-extrabold text-black">Guest List</h1>
+              <h1 className="text-3xl font-medium text-black">Guest List</h1>
               <input
                 onClick={handleAddGuestClicked}
                 type="button"
@@ -207,27 +207,58 @@ function Dashboard() {
                 className="font-poppins border-divider cursor-pointer rounded-full border px-4 py-1"
               />
             </div>
-            <div className="border-divider font-poppins mt-8 grid w-full grid-cols-3 border-y px-3 py-1 text-base font-semibold">
-              <h3>Nickname</h3>
-              <h3>Guest Names</h3>
-            </div>
-            <div className="font-poppins grid w-full cursor-pointer grid-cols-3 px-3 py-4 font-light">
-              {guests.map(([id, guest]) => {
-                const guestLength = Object.keys(guests).length;
-                return (
-                  <div
-                    key={id}
-                    className="group border-divider/50 col-span-3 grid grid-cols-3 border-b py-2"
-                    onClick={handleGuestClicked(id)}
-                  >
-                    <p>{guest.nickname}</p>
-                    <p>{Object.keys(guest.invitees).map((name, i) => `${name}${guestLength > 1 && i < guestLength - 1 ? ', ' : ''}`)}</p>
-                    <div className="flex items-center justify-end">
-                      <LinkIcon className="h-4 w-4 not-group-hover:hidden" />
+            <div className="mx-4 mt-8 overflow-clip rounded-xl border border-slate-200 bg-white text-sm">
+              <div className="font- poppins grid w-full grid-cols-(--dashboard-cols) gap-x-2 bg-slate-100 px-3 py-2">
+                <h3 className="flex items-center gap-2">
+                  Nickname <ArrowDown className="h-3 w-3 stroke-slate-800 stroke-[2.2px]" />
+                </h3>
+                <h3 className="flex items-center gap-2">
+                  Replied At <ChevronsUpDown className="h-3 w-3 stroke-slate-400 stroke-[2.2px]" />
+                </h3>
+                <h3 className="flex items-center gap-2">
+                  Guest Names <ChevronsUpDown className="h-3 w-3 stroke-slate-400 stroke-[2.2px]" />
+                </h3>
+                <h3 className="flex items-center gap-2">
+                  Reply <ChevronsUpDown className="h-3 w-3 stroke-slate-400 stroke-[2.2px]" />
+                </h3>
+                <h3 className="text-center">Link</h3>
+              </div>
+              <div className="font-poppins flex w-full cursor-pointer flex-col font-light">
+                {guests.map(([id, guest]) => {
+                  const guestLength = Object.keys(guests).length;
+                  return (
+                    <div
+                      key={id}
+                      className="group border-divider/50 grid grid-cols-(--dashboard-cols) gap-x-2 border-b px-3 py-2"
+                      onClick={handleGuestClicked(id)}
+                    >
+                      <p className="py-2 font-medium">{guest.nickname}</p>
+                      <p>{guest.repliedAt ?? ''}</p>
+                      <div className="col-span-2 flex flex-col">
+                        {Object.entries(guest.invitees).map(([name, reply], i) => (
+                          <div
+                            key={name + i}
+                            className="border-divider/50 grid grid-cols-[2fr_1fr] items-center not-first:mt-1 not-first:border-t not-first:pt-1"
+                          >
+                            <p className="py-2">{name}</p>
+                            <div
+                              className={`${reply == undefined && 'pending'} divider flex w-fit items-center gap-1 rounded-sm border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-900 [.pending]:text-slate-500`}
+                            >
+                              <div
+                                className={`${reply == undefined ? '' : reply == true ? 'accept' : 'decline'} aspect-square h-2 w-2 rounded-full bg-slate-300 [.accept]:bg-green-500 [.decline]:bg-red-500`}
+                              />
+                              {reply == undefined ? 'PENDING' : 'ACCEPT'}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="flex items-center justify-center">
+                        <LinkIcon className="aspect-square h-4 w-4 stroke-slate-500 stroke-2" />
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
             </div>
           </div>
           <aside className="mt-24 flex w-60 flex-col items-center px-6">

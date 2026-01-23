@@ -21,6 +21,8 @@
   --color-items: #444;
   --color-rsvp: #333;
   --color-divider: #cdcdcd;
+
+  --dashboard-cols: 1fr 1fr 2fr 1fr 0.5fr;
 }
 
 .firebase-emulator-warning {
