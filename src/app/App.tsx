@@ -3,6 +3,10 @@ import { MouseEvent, useState } from 'react';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { format, getDaysInMonth } from 'date-fns';
+import { useAtom } from 'jotai';
+import { GuestRSVP } from '@/features/dashboard/types';
+import { useGuest } from '@/features/guests/hooks/useGuest';
+import { guestAtom } from '@/store/store';
 
 import { Quote } from 'lucide-react';
 import highlightImg from '/highlight.svg';
@@ -14,11 +18,9 @@ import storyOfUsImg from '/images/story-of-us.png';
 import rsvpRImg from '/images/RSVP-R.png';
 import flourishR from '/images/flourish-r.svg';
 import flourishL from '/images/flourish-l.svg';
-
 import brownImg from '/images/brown.png';
 import greenImg from '/images/green.png';
 import mushroomImg from '/images/mushroom.png';
-import { useGuest } from '@/features/guests/hooks/useGuest';
 
 const timeline = [
   ['2:00 pm', 'ceremony'],
@@ -31,19 +33,22 @@ const timeline = [
 const invitees = [{ name: 'Eduardo Alde, Jr' }, { name: 'Corazon Alde' }];
 
 function RSVP() {
-  const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const guestId = query.get('id');
-  const { guest } = useGuest(guestId);
+  // local states
+  const [replies, setReply] = useState<GuestRSVP>({});
+  const [guests, setGuests] = useAtom(guestAtom);
 
-  // console.log(guest);
+  useEffect(() => {
+    const nextReply = Object.entries(guests).reduce((acc: GuestRSVP, [name, reply]) => {
+      acc[name] = reply;
+      return acc;
+    }, {});
 
-  const [reply, setReply] = useState<Record<number, string>>({});
+    setReply(nextReply);
+  }, [guests]);
 
-  const handleRsvpClicked = (i: number, id: string) => () => {
-    // debugger;
-    const nextReply = { ...reply };
-    nextReply[i] = id;
+  const handleRsvpClicked = (name: string, val: boolean) => () => {
+    const nextReply = { ...replies };
+    nextReply[name] = val;
 
     setReply(nextReply);
   };
@@ -63,7 +68,7 @@ function RSVP() {
         <h4 className="font-playfair -mt-6 mb-16">Please kindly reply by July 29</h4>
         <div>
           <form className="flex flex-col items-center">
-            {invitees.map(({ name }, i) => (
+            {Object.entries(guests.invitees).map(([name, reply], i) => (
               <div key={i} className="w-full not-first:mt-8">
                 <div className="border-items flex items-end border-b">
                   <p className="font-bold">M</p>
@@ -77,11 +82,11 @@ function RSVP() {
                       type="radio"
                       name={`rsvp-${i}`}
                       value="yes"
-                      onChange={handleRsvpClicked(i, `rsvp-${i}-y`)}
-                      checked={reply[i] == `rsvp-${i}-y`}
+                      onChange={handleRsvpClicked(name, true)}
+                      checked={replies[name] == true}
                     />
                     <div className="aspect-square h-4 w-4 rounded-full border p-0.5">
-                      {reply[i] == `rsvp-${i}-y` && <div className="aspect-square h-full w-full rounded-full bg-black" />}
+                      {replies[name] == true && <div className="aspect-square h-full w-full rounded-full bg-black" />}
                     </div>
                     Accepts Gladly
                   </label>
@@ -92,11 +97,11 @@ function RSVP() {
                       type="radio"
                       name={`rsvp-${i}`}
                       value="no"
-                      onChange={handleRsvpClicked(i, `rsvp-${i}-n`)}
-                      checked={reply[i] == `rsvp-${i}-n`}
+                      onChange={handleRsvpClicked(name, false)}
+                      checked={replies[name] == false}
                     />
                     <div className="aspect-square h-4 w-4 rounded-full border p-0.5">
-                      {reply[i] == `rsvp-${i}-n` && <div className="aspect-square h-full w-full rounded-full bg-black" />}
+                      {replies[name] == false && <div className="aspect-square h-full w-full rounded-full bg-black" />}
                     </div>
                     Decline Regretfully
                   </label>
@@ -227,9 +232,20 @@ function Countdown() {
 }
 
 function App() {
+  // hooks
   const { search } = useLocation();
-  const params = new URLSearchParams(search);
-  const name = params.get('name');
+  const query = new URLSearchParams(search);
+  const guestId = query.get('id');
+  const { guest: guestQuery, loading } = useGuest(guestId);
+
+  // local states
+  const [guests, setGuests] = useAtom(guestAtom);
+
+  useEffect(() => {
+    if (guestQuery != undefined) {
+      setGuests(guestQuery);
+    }
+  }, [guestQuery]);
 
   return (
     <div className="font-libre-baskerville relative mx-auto w-full max-w-350 px-0 sm:px-10 lg:px-18">
@@ -273,8 +289,8 @@ function App() {
                   You're Cordially Invited To Share The Couple's Special Day
                 </h3>
                 <p>
-                  Dear <span className="relative bg-yellow-200 font-bold text-black">Tito Jun & Coco</span>, the couple would love it if you
-                  could make it to their wedding on <span className="font-bold text-black">August 29, 2026</span>
+                  Dear <span className="relative bg-yellow-200 font-bold text-black">{guests.nickname}</span>, the couple would love it if
+                  you could make it to their wedding on <span className="font-bold text-black">August 29, 2026</span>
                 </p>
                 <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
                   <p className="text-sm text-blue-900 underline">Jump to RSVP</p>

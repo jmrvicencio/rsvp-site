@@ -1,4 +1,9 @@
 export interface Guest {
   nickname: string;
-  names: string[];
+  invitees: GuestRSVP;
+  repliedAt?: number;
+}
+
+export interface GuestRSVP {
+  [name: string]: boolean | null;
 }

@@ -3,13 +3,14 @@ import { Link, Meta, useNavigate } from 'react-router-dom';
 
 import { showOverlayAtom } from '@/features/dashboard/store/store';
 import { useAddGuest } from '@/features/dashboard/hooks/useAddGuest';
-import { Guest } from '@/features/dashboard/types';
+import { Guest, GuestRSVP } from '@/features/dashboard/types';
 
 import monogram from '/images/monogram.svg';
 import { auth } from '@/lib/firebase/auth';
 import { useAtom } from 'jotai';
 import { useGuests } from '@/features/dashboard/hooks/useGuests';
 import { Link as LinkIcon } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 function AddGuestOverlay() {
   // hooks
@@ -83,7 +84,10 @@ function AddGuestOverlay() {
     // Submit Guests
     await addGuest({
       nickname,
-      names: guestNames,
+      invitees: guestNames.reduce((acc: GuestRSVP, name) => {
+        acc[name] = null;
+        return acc;
+      }, {}),
     });
     setOverlay(false);
   };
@@ -148,6 +152,7 @@ function Overlay() {
   const [_, setOverlay] = useAtom(showOverlayAtom);
 
   const handleOverlayClicked = () => {
+    console.log('closing overlay');
     setOverlay(false);
   };
 
@@ -184,6 +189,7 @@ function Dashboard() {
     const guestUrl = `${url}#/?id=${id}`;
     console.log(guestUrl);
     await navigator.clipboard.writeText(guestUrl);
+    toast.success('Copied to clipboard');
   };
 
   return (
@@ -206,19 +212,22 @@ function Dashboard() {
               <h3>Guest Names</h3>
             </div>
             <div className="font-poppins grid w-full cursor-pointer grid-cols-3 px-3 py-4 font-light">
-              {guests.map(([id, guest]) => (
-                <div
-                  key={id}
-                  className="group border-divider/50 col-span-3 grid grid-cols-3 border-b py-2"
-                  onClick={handleGuestClicked(id)}
-                >
-                  <p>{guest.nickname}</p>
-                  <p>{guest.names.map((name, i) => `${name}${guest.names.length > 1 && i < guest.names.length - 1 ? ', ' : ''}`)}</p>
-                  <div className="flex items-center justify-end">
-                    <LinkIcon className="h-4 w-4 not-group-hover:hidden" />
+              {guests.map(([id, guest]) => {
+                const guestLength = Object.keys(guests).length;
+                return (
+                  <div
+                    key={id}
+                    className="group border-divider/50 col-span-3 grid grid-cols-3 border-b py-2"
+                    onClick={handleGuestClicked(id)}
+                  >
+                    <p>{guest.nickname}</p>
+                    <p>{Object.keys(guest.invitees).map((name, i) => `${name}${guestLength > 1 && i < guestLength - 1 ? ', ' : ''}`)}</p>
+                    <div className="flex items-center justify-end">
+                      <LinkIcon className="h-4 w-4 not-group-hover:hidden" />
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           </div>
           <aside className="mt-24 flex w-60 flex-col items-center px-6">

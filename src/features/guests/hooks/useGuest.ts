@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 
 export const useGuest = (id: string | null) => {
   const [guest, setGuest] = useState<Guest>();
+  const [loading, setLoading] = useState(true);
 
   if (id == null) return { guest };
 
@@ -16,7 +17,9 @@ export const useGuest = (id: string | null) => {
     const fetchData = async () => {
       try {
         const nextGuest = await getDoc(guestRef);
+
         setGuest(nextGuest.data());
+        setLoading(false);
       } catch (err) {
         const error = err as Error;
 
@@ -26,7 +29,7 @@ export const useGuest = (id: string | null) => {
     };
 
     fetchData();
-  });
+  }, []);
 
-  return { guest };
+  return { guest, loading };
 };
