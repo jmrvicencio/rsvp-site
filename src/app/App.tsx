@@ -1,7 +1,7 @@
 import { MouseEvent, useState, useMemo } from 'react';
 // import { useParams, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { format, getDaysInMonth } from 'date-fns';
 import { useAtom } from 'jotai';
 import { GuestRSVP } from '@/features/dashboard/types';
@@ -9,7 +9,7 @@ import { useGuest } from '@/features/guests/hooks/useGuest';
 import { useSetGuest } from '@/features/guests/hooks/useSetGuest';
 import { guestAtom } from '@/store/store';
 
-import { CircleAlert } from 'lucide-react';
+import { CircleAlert, LoaderCircle } from 'lucide-react';
 
 import { Quote } from 'lucide-react';
 import highlightImg from '/highlight.svg';
@@ -38,10 +38,8 @@ const invitees = [{ name: 'Eduardo Alde, Jr' }, { name: 'Corazon Alde' }];
 
 function RSVP() {
   // hooks
-  const { search } = useLocation();
-  const query = useMemo(() => new URLSearchParams(search), [search]);
-  const guestId = useMemo(() => query.get('id'), [query]);
-  const setGuest = useSetGuest(guestId ?? '');
+  const { id: guestId } = useParams();
+  const { setGuest, submitting } = useSetGuest(guestId!);
 
   // local states
   const [guests, setGuests] = useAtom(guestAtom);
@@ -134,14 +132,22 @@ function RSVP() {
                 </div>
               </div>
             ))}
-            <div className="mt-6 flex h-25 flex-col items-center justify-end gap-2">
-              <input type="button" value="Send Reply" className="w-fit cursor-pointer border p-4 py-2" onClick={handleSubmitClicked} />
-              <div className="h-6 text-red-700">
-                <div className={`${error && 'error'} hidden gap-2 [.error]:flex`}>
-                  <CircleAlert className="stroke-[1.2px]" />
-                  Please make sure all items are filled
-                </div>
-              </div>
+            <div
+              className={`${submitting && 'submitting'} mt-6 flex h-25 flex-col items-center justify-end gap-2 [.submitting]:justify-center`}
+            >
+              {submitting ? (
+                <LoaderCircle className="animate-spin" />
+              ) : (
+                <>
+                  <input type="button" value="Send Reply" className="w-fit cursor-pointer border p-4 py-2" onClick={handleSubmitClicked} />
+                  <div className="h-6 text-red-700">
+                    <div className={`${error && 'error'} hidden gap-2 [.error]:flex`}>
+                      <CircleAlert className="stroke-[1.2px]" />
+                      Please make sure all items are filled
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           </form>
         </div>
@@ -267,10 +273,8 @@ function Countdown() {
 
 function App() {
   // hooks
-  const { search } = useLocation();
-  const query = useMemo(() => new URLSearchParams(search), [search]);
-  const guestId = useMemo(() => query.get('id'), [query]);
-  const { guest: guestQuery, loading } = useGuest(guestId);
+  const { id: guestId } = useParams();
+  const { guest: guestQuery, loading } = useGuest(guestId!);
 
   // local states
   const [guests, setGuests] = useAtom(guestAtom);

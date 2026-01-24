@@ -308,7 +308,7 @@ function Dashboard() {
 
   const handleGuestClicked = (id: string) => async () => {
     const url = `${window.location.origin}${location.pathname}`;
-    const guestUrl = `${url}#/?id=${id}`;
+    const guestUrl = `${url}#/${id}`;
     console.log(guestUrl);
     await navigator.clipboard.writeText(guestUrl);
     toast.success('Copied to clipboard');
