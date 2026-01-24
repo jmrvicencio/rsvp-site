@@ -111,8 +111,9 @@ function AddGuestOverlay() {
 
     // Submit Guests
     if (!submitting) {
+      const nextNickname = nickname == '' ? guestNames[0] : nickname;
       await addGuest({
-        nickname,
+        nickname: nextNickname,
         invitees: guestNames.reduce((acc: GuestRSVP, name) => {
           acc[name] = null;
           return acc;
@@ -371,7 +372,7 @@ function Dashboard() {
                               <div
                                 className={`${reply == undefined ? '' : reply == true ? 'accept' : 'decline'} aspect-square h-2 w-2 rounded-full bg-slate-300 [.accept]:bg-green-500 [.decline]:bg-red-500`}
                               />
-                              {reply == undefined ? 'PENDING' : 'ACCEPT'}
+                              {reply == undefined ? 'PENDING' : reply == true ? 'ACCEPT' : 'DECLINE'}
                             </div>
                           </div>
                         ))}

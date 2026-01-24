@@ -1,5 +1,6 @@
 import { MouseEvent, useState, useMemo } from 'react';
 // import { useParams, useLocation } from 'react-router-dom';
+import { AnimatePresence, motion } from 'motion/react';
 import { useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { format, getDaysInMonth } from 'date-fns';
@@ -144,19 +145,24 @@ function RSVP() {
                 <LoaderCircle className="animate-spin" />
               ) : hasSubmitted ? (
                 <>
-                  {canResubmit && (
-                    <input
-                      type="button"
-                      value="Update Reply"
-                      className={`w-fit cursor-pointer border p-4 py-2`}
-                      onClick={handleSubmitClicked}
-                    />
-                  )}
-                  <div className="h-6">
+                  <AnimatePresence>
+                    {canResubmit && (
+                      <motion.input
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        exit={{ scale: 0 }}
+                        type="button"
+                        value="Update Reply"
+                        className={`w-fit cursor-pointer border p-4 py-2`}
+                        onClick={handleSubmitClicked}
+                      />
+                    )}
+                  </AnimatePresence>
+                  <motion.div initial={{ translateY: 50, opacity: 0 }} animate={{ translateY: 0, opacity: 1 }} className="h-6">
                     <p className="text-sm text-stone-500">
                       Replied @ <span className="font-semibold">{format(new Date(guests.repliedAt!), 'Pp')}</span>
                     </p>
-                  </div>
+                  </motion.div>
                 </>
               ) : (
                 <>
