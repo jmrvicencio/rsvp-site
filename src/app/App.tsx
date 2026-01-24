@@ -4,17 +4,15 @@ import { useEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { format, getDaysInMonth } from 'date-fns';
 import { useAtom } from 'jotai';
-import { GuestRSVP } from '@/features/dashboard/types';
+import { Guest, GuestRSVP } from '@/features/dashboard/types';
 import { useGuest } from '@/features/guests/hooks/useGuest';
-import { useSetGuest } from '@/features/guests/hooks/useSetGuest';
+import { useUpdateGuest } from '@/features/guests/hooks/useSetGuest';
 import { guestAtom } from '@/store/store';
 
 import { CircleAlert, LoaderCircle } from 'lucide-react';
 
 import { Quote } from 'lucide-react';
-import highlightImg from '/highlight.svg';
 import coupleImg from '/images/couple.png';
-import coupleImg2 from '/images/couple2.png';
 import donBoscoImg from '/images/don_bosco.png';
 import arugaImg from '/images/aruga.png';
 import storyOfUsImg from '/images/story-of-us.png';
@@ -39,7 +37,7 @@ const invitees = [{ name: 'Eduardo Alde, Jr' }, { name: 'Corazon Alde' }];
 function RSVP() {
   // hooks
   const { id: guestId } = useParams();
-  const { setGuest, submitting } = useSetGuest(guestId!);
+  const { updateGuest, submitting } = useUpdateGuest(guestId!);
 
   // local states
   const [guests, setGuests] = useAtom(guestAtom);
@@ -52,8 +50,6 @@ function RSVP() {
     () => hasSubmitted && Object.keys(guests.invitees).some((key) => guests.invitees[key] != replies[key]),
     [guests, replies],
   );
-
-  console.log('submitted: ', hasSubmitted, guests);
 
   useEffect(() => {
     const nextReply = Object.entries(guests.invitees).reduce((acc: GuestRSVP, [name, reply]) => {
@@ -70,7 +66,7 @@ function RSVP() {
     setReply(nextReply);
   };
 
-  const handleSubmitClicked = () => {
+  const handleSubmitClicked = async () => {
     const valid = !Object.values(replies).some((val) => typeof val != 'boolean');
 
     if (!valid) {
@@ -80,9 +76,9 @@ function RSVP() {
       return;
     }
 
-    const nextGuests = { ...guests };
-    nextGuests.invitees = replies;
-    setGuest(nextGuests);
+    const nextGuests: Guest = { ...guests, invitees: replies, repliedAt: new Date().getTime() };
+    await updateGuest(nextGuests);
+    setError(false);
     setGuests(nextGuests);
   };
 
@@ -148,12 +144,14 @@ function RSVP() {
                 <LoaderCircle className="animate-spin" />
               ) : hasSubmitted ? (
                 <>
-                  <input
-                    type="button"
-                    value="Send Reply"
-                    className={`${canResubmit && 'resubmit'} hidden w-fit cursor-pointer border p-4 py-2 [.resubmit]:block`}
-                    onClick={handleSubmitClicked}
-                  />
+                  {canResubmit && (
+                    <input
+                      type="button"
+                      value="Update Reply"
+                      className={`w-fit cursor-pointer border p-4 py-2`}
+                      onClick={handleSubmitClicked}
+                    />
+                  )}
                   <div className="h-6">
                     <p className="text-sm text-stone-500">
                       Replied @ <span className="font-semibold">{format(new Date(guests.repliedAt!), 'Pp')}</span>
