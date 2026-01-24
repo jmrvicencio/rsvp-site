@@ -7,3 +7,5 @@ export interface Guest {
 export interface GuestRSVP {
   [name: string]: boolean | null;
 }
+
+export type SortType = 'nickname' | 'repliedAt' | 'reply' | 'name';

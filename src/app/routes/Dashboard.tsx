@@ -1,26 +1,45 @@
-import { ChangeEvent, MouseEvent, useState } from 'react';
+import { ChangeEvent, MouseEvent, useState, useRef, useEffect } from 'react';
 import { Link, Meta, useNavigate } from 'react-router-dom';
+import _ from 'lodash';
 
 import { showOverlayAtom } from '@/features/dashboard/store/store';
 import { useAddGuest } from '@/features/dashboard/hooks/useAddGuest';
-import { Guest, GuestRSVP } from '@/features/dashboard/types';
+import { Guest, GuestRSVP, SortType } from '@/features/dashboard/types';
 
 import monogram from '/images/monogram.svg';
 import { auth } from '@/lib/firebase/auth';
 import { useAtom } from 'jotai';
 import { useGuests } from '@/features/dashboard/hooks/useGuests';
-import { Link as LinkIcon, ChevronsUpDown, ArrowDown } from 'lucide-react';
+import { Link as LinkIcon, ChevronsUpDown, ArrowDown, ArrowUp } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 function AddGuestOverlay() {
+  // Refs
+  const nameInputRefs = useRef<(HTMLInputElement | null)[]>([]);
+
   // hooks
-  const addGuest = useAddGuest();
+  const { addGuest, submitting } = useAddGuest();
 
   // local states
   const [_, setOverlay] = useAtom(showOverlayAtom);
+  const [newGuest, setNewGuest] = useState<boolean>(false);
   const [nickname, setNickname] = useState<string>('');
   const [guestNames, setGuestNames] = useState<string[]>(['']);
   const [error, setError] = useState<Set<number>>(new Set());
+
+  // ---------------------------
+  // Effects
+  // ---------------------------
+
+  useEffect(() => {
+    if (newGuest === false) return;
+    console.log('focusing element');
+
+    const i = guestNames.length - 1;
+    nameInputRefs.current[i]?.focus();
+
+    setNewGuest(false);
+  }, [newGuest]);
 
   // ---------------------------
   // Event Handlers
@@ -66,6 +85,15 @@ function AddGuestOverlay() {
     setGuestNames(nextGuestName);
   };
 
+  const handleAddGuestChanged = (e: ChangeEvent<HTMLInputElement>) => {
+    const val = e.currentTarget.value;
+    const nextGuestName = [...guestNames];
+    nextGuestName.push(val);
+
+    setGuestNames(nextGuestName);
+    setNewGuest(true);
+  };
+
   const handleDoneClicked = async () => {
     const nextError = new Set<number>();
 
@@ -82,14 +110,16 @@ function AddGuestOverlay() {
     }
 
     // Submit Guests
-    await addGuest({
-      nickname,
-      invitees: guestNames.reduce((acc: GuestRSVP, name) => {
-        acc[name] = null;
-        return acc;
-      }, {}),
-    });
-    setOverlay(false);
+    if (!submitting) {
+      await addGuest({
+        nickname,
+        invitees: guestNames.reduce((acc: GuestRSVP, name) => {
+          acc[name] = null;
+          return acc;
+        }, {}),
+      });
+      setOverlay(false);
+    }
   };
 
   return (
@@ -127,6 +157,9 @@ function AddGuestOverlay() {
                 )}
               </div>
               <input
+                ref={(el) => {
+                  nameInputRefs.current[i] = el;
+                }}
                 id="guest"
                 type="text"
                 value={name}
@@ -136,6 +169,21 @@ function AddGuestOverlay() {
               />
             </div>
           ))}
+          <div className="flex w-full flex-col gap-1 not-first:mt-2">
+            <div className="flex h-5 justify-between px-1 text-sm">
+              <label htmlFor="add-guests" className="text-items/40">
+                Add More Guests...{' '}
+              </label>
+            </div>
+            <input
+              id="add-guests"
+              type="text"
+              onChange={handleAddGuestChanged}
+              placeholder="Additional Guest"
+              value=""
+              className={`border-divider grow rounded-sm border bg-white px-2 py-1`}
+            />
+          </div>
         </div>
       </div>
       <input
@@ -163,13 +211,87 @@ function Overlay() {
   );
 }
 
+function SortArrow({ active = false, sortDirection }: { active?: boolean; sortDirection: 'asc' | 'desc' }) {
+  const className = `${!active && 'inactive'} h-3 w-3 [.inactive]:stroke-slate-400 stroke-slate-800 stroke-[2.2px]`;
+
+  return !active ? (
+    <ChevronsUpDown {...{ className }} />
+  ) : sortDirection == 'desc' ? (
+    <ArrowDown {...{ className }} />
+  ) : (
+    <ArrowUp {...{ className }} />
+  );
+}
+
 function Dashboard() {
   // hooks
   const nav = useNavigate();
 
   // local states
   const [overlay, setOverlay] = useAtom(showOverlayAtom);
-  const { guests } = useGuests();
+  const { guests: guestsQuery } = useGuests();
+  const [guests, setGuests] = useState([...guestsQuery]);
+  const [sortType, setSortType] = useState<SortType>('nickname');
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+
+  // -------------------------------
+  // Effects
+  // -------------------------------
+
+  useEffect(() => {
+    setGuests([...guestsQuery]);
+  }, [guestsQuery]);
+
+  useEffect(() => {
+    console.log(guestsQuery);
+    let nextGuests: [string, Guest][] = [];
+
+    switch (sortType) {
+      case 'nickname':
+        nextGuests = _.orderBy(guestsQuery, ([_, guest]) => guest.nickname, [sortDirection]);
+        setGuests(nextGuests);
+
+        break;
+      case 'repliedAt':
+        nextGuests = _.orderBy(guestsQuery, [([_, guest]) => guest.repliedAt, ([_, guest]) => guest.nickname], [sortDirection, 'asc']);
+        setGuests(nextGuests);
+
+        break;
+      case 'name':
+        nextGuests = guestsQuery.reduce((acc: [string, Guest][], [id, guest]) => {
+          Object.entries(guest.invitees).forEach(([name, reply]) => {
+            acc.push([id, { ...guest, invitees: { [name]: reply } }]);
+          });
+          return acc;
+        }, []);
+
+        nextGuests = _.orderBy(
+          nextGuests,
+          [([_, guest]) => Object.keys(guest.invitees)[0], ([_, guest]) => guest.nickname],
+          [sortDirection, 'asc'],
+        );
+        setGuests(nextGuests);
+
+        break;
+      case 'reply':
+        nextGuests = guestsQuery.reduce((acc: [string, Guest][], [id, guest]) => {
+          Object.entries(guest.invitees).forEach(([name, reply]) => {
+            acc.push([id, { ...guest, invitees: { [name]: reply } }]);
+          });
+          return acc;
+        }, []);
+
+        nextGuests = _.orderBy(
+          nextGuests,
+          [([_, guest]) => Object.values(guest.invitees)[0], ([_, guest]) => guest.nickname],
+          [sortDirection, 'asc'],
+        );
+        setGuests(nextGuests);
+        break;
+      default:
+        break;
+    }
+  }, [sortType, sortDirection]);
 
   // -------------------------------
   // Event Handlers
@@ -192,6 +314,12 @@ function Dashboard() {
     toast.success('Copied to clipboard');
   };
 
+  const handleHeadingClicked = (val: SortType) => () => {
+    setSortType(val);
+
+    if (val == sortType) setSortDirection((prev) => (prev == 'asc' ? 'desc' : 'asc'));
+  };
+
   return (
     <>
       {overlay && <Overlay />}
@@ -209,36 +337,32 @@ function Dashboard() {
             </div>
             <div className="mx-4 mt-8 overflow-clip rounded-xl border border-slate-200 bg-white text-sm">
               <div className="font- poppins grid w-full grid-cols-(--dashboard-cols) gap-x-2 bg-slate-100 px-3 py-2">
-                <h3 className="flex items-center gap-2">
-                  Nickname <ArrowDown className="h-3 w-3 stroke-slate-800 stroke-[2.2px]" />
+                <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('nickname')}>
+                  Nickname <SortArrow {...{ sortDirection, active: sortType == 'nickname' }} />
                 </h3>
-                <h3 className="flex items-center gap-2">
-                  Replied At <ChevronsUpDown className="h-3 w-3 stroke-slate-400 stroke-[2.2px]" />
+                <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('repliedAt')}>
+                  Replied At <SortArrow {...{ sortDirection, active: sortType == 'repliedAt' }} />
                 </h3>
-                <h3 className="flex items-center gap-2">
-                  Guest Names <ChevronsUpDown className="h-3 w-3 stroke-slate-400 stroke-[2.2px]" />
+                <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('name')}>
+                  Guest Names <SortArrow {...{ sortDirection, active: sortType == 'name' }} />
                 </h3>
-                <h3 className="flex items-center gap-2">
-                  Reply <ChevronsUpDown className="h-3 w-3 stroke-slate-400 stroke-[2.2px]" />
+                <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('reply')}>
+                  Reply <SortArrow {...{ sortDirection, active: sortType == 'reply' }} />
                 </h3>
                 <h3 className="text-center">Link</h3>
               </div>
-              <div className="font-poppins flex w-full cursor-pointer flex-col font-light">
-                {guests.map(([id, guest]) => {
+              <div className="font-poppins flex w-full flex-col font-light">
+                {guests.map(([id, guest], i) => {
                   const guestLength = Object.keys(guests).length;
                   return (
-                    <div
-                      key={id}
-                      className="group border-divider/50 grid grid-cols-(--dashboard-cols) gap-x-2 border-b px-3 py-2"
-                      onClick={handleGuestClicked(id)}
-                    >
+                    <div key={id + i} className="group border-divider/50 grid grid-cols-(--dashboard-cols) gap-x-2 border-b px-3 py-2">
                       <p className="py-2 font-medium">{guest.nickname}</p>
                       <p>{guest.repliedAt ?? ''}</p>
                       <div className="col-span-2 flex flex-col">
                         {Object.entries(guest.invitees).map(([name, reply], i) => (
                           <div
                             key={name + i}
-                            className="border-divider/50 grid grid-cols-[2fr_1fr] items-center not-first:mt-1 not-first:border-t not-first:pt-1"
+                            className="border-divider/50 grid grid-cols-[2fr_1fr] items-center not-first:mt-2 not-first:border-t not-first:pt-2"
                           >
                             <p className="py-2">{name}</p>
                             <div
@@ -252,7 +376,7 @@ function Dashboard() {
                           </div>
                         ))}
                       </div>
-                      <div className="flex items-center justify-center">
+                      <div className="flex cursor-pointer items-center justify-center" onClick={handleGuestClicked(id)}>
                         <LinkIcon className="aspect-square h-4 w-4 stroke-slate-500 stroke-2" />
                       </div>
                     </div>

@@ -8,7 +8,7 @@ import { useState } from 'react';
 export const useAddGuest = () => {
   const [submitting, setSubmitting] = useState(false);
 
-  return async (guest: Guest) => {
+  const addGuest = async (guest: Guest) => {
     if (submitting) return;
 
     try {
@@ -18,6 +18,7 @@ export const useAddGuest = () => {
 
       setSubmitting(true);
       await setDoc(guestRef, guest);
+
       setSubmitting(false);
       return;
     } catch (err) {
@@ -27,4 +28,6 @@ export const useAddGuest = () => {
       throw err;
     }
   };
+
+  return { addGuest, submitting };
 };
