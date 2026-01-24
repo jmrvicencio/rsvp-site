@@ -46,6 +46,15 @@ function RSVP() {
   const [replies, setReply] = useState<GuestRSVP>({});
   const [error, setError] = useState(false);
 
+  // computed states
+  const hasSubmitted = guests.repliedAt != undefined;
+  const canResubmit: boolean = useMemo(
+    () => hasSubmitted && Object.keys(guests.invitees).some((key) => guests.invitees[key] != replies[key]),
+    [guests, replies],
+  );
+
+  console.log('submitted: ', hasSubmitted, guests);
+
   useEffect(() => {
     const nextReply = Object.entries(guests.invitees).reduce((acc: GuestRSVP, [name, reply]) => {
       acc[name] = reply;
@@ -137,6 +146,20 @@ function RSVP() {
             >
               {submitting ? (
                 <LoaderCircle className="animate-spin" />
+              ) : hasSubmitted ? (
+                <>
+                  <input
+                    type="button"
+                    value="Send Reply"
+                    className={`${canResubmit && 'resubmit'} hidden w-fit cursor-pointer border p-4 py-2 [.resubmit]:block`}
+                    onClick={handleSubmitClicked}
+                  />
+                  <div className="h-6">
+                    <p className="text-sm text-stone-500">
+                      Replied @ <span className="font-semibold">{format(new Date(guests.repliedAt!), 'Pp')}</span>
+                    </p>
+                  </div>
+                </>
               ) : (
                 <>
                   <input type="button" value="Send Reply" className="w-fit cursor-pointer border p-4 py-2" onClick={handleSubmitClicked} />
