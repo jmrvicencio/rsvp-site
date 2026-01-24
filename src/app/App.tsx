@@ -1,4 +1,4 @@
-import { MouseEvent, useState } from 'react';
+import { MouseEvent, useState, useMemo } from 'react';
 // import { useParams, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -6,7 +6,10 @@ import { format, getDaysInMonth } from 'date-fns';
 import { useAtom } from 'jotai';
 import { GuestRSVP } from '@/features/dashboard/types';
 import { useGuest } from '@/features/guests/hooks/useGuest';
+import { useSetGuest } from '@/features/guests/hooks/useSetGuest';
 import { guestAtom } from '@/store/store';
+
+import { CircleAlert } from 'lucide-react';
 
 import { Quote } from 'lucide-react';
 import highlightImg from '/highlight.svg';
@@ -21,6 +24,7 @@ import flourishL from '/images/flourish-l.svg';
 import brownImg from '/images/brown.png';
 import greenImg from '/images/green.png';
 import mushroomImg from '/images/mushroom.png';
+import toast from 'react-hot-toast';
 
 const timeline = [
   ['2:00 pm', 'ceremony'],
@@ -33,16 +37,22 @@ const timeline = [
 const invitees = [{ name: 'Eduardo Alde, Jr' }, { name: 'Corazon Alde' }];
 
 function RSVP() {
+  // hooks
+  const { search } = useLocation();
+  const query = useMemo(() => new URLSearchParams(search), [search]);
+  const guestId = useMemo(() => query.get('id'), [query]);
+  const setGuest = useSetGuest(guestId ?? '');
+
   // local states
-  const [replies, setReply] = useState<GuestRSVP>({});
   const [guests, setGuests] = useAtom(guestAtom);
+  const [replies, setReply] = useState<GuestRSVP>({});
+  const [error, setError] = useState(false);
 
   useEffect(() => {
-    const nextReply = Object.entries(guests).reduce((acc: GuestRSVP, [name, reply]) => {
+    const nextReply = Object.entries(guests.invitees).reduce((acc: GuestRSVP, [name, reply]) => {
       acc[name] = reply;
       return acc;
     }, {});
-
     setReply(nextReply);
   }, [guests]);
 
@@ -51,6 +61,22 @@ function RSVP() {
     nextReply[name] = val;
 
     setReply(nextReply);
+  };
+
+  const handleSubmitClicked = () => {
+    const valid = !Object.values(replies).some((val) => typeof val != 'boolean');
+
+    if (!valid) {
+      toast.error('Please make sure all RSVPs are filled');
+      setError(true);
+      console.log(valid);
+      return;
+    }
+
+    const nextGuests = { ...guests };
+    nextGuests.invitees = replies;
+    setGuest(nextGuests);
+    setGuests(nextGuests);
   };
 
   return (
@@ -108,7 +134,15 @@ function RSVP() {
                 </div>
               </div>
             ))}
-            <input type="button" value="Send Reply" className="mt-8 cursor-pointer border p-4 py-2" />
+            <div className="mt-6 flex h-25 flex-col items-center justify-end gap-2">
+              <input type="button" value="Send Reply" className="w-fit cursor-pointer border p-4 py-2" onClick={handleSubmitClicked} />
+              <div className="h-6 text-red-700">
+                <div className={`${error && 'error'} hidden gap-2 [.error]:flex`}>
+                  <CircleAlert className="stroke-[1.2px]" />
+                  Please make sure all items are filled
+                </div>
+              </div>
+            </div>
           </form>
         </div>
       </div>
@@ -234,8 +268,8 @@ function Countdown() {
 function App() {
   // hooks
   const { search } = useLocation();
-  const query = new URLSearchParams(search);
-  const guestId = query.get('id');
+  const query = useMemo(() => new URLSearchParams(search), [search]);
+  const guestId = useMemo(() => query.get('id'), [query]);
   const { guest: guestQuery, loading } = useGuest(guestId);
 
   // local states
