@@ -9,6 +9,7 @@ import { Guest, GuestRSVP } from '@/features/dashboard/types';
 import { useGuest } from '@/features/guests/hooks/useGuest';
 import { useUpdateGuest } from '@/features/guests/hooks/useSetGuest';
 import { guestAtom } from '@/store/store';
+import toast from 'react-hot-toast';
 
 import { CircleAlert, LoaderCircle } from 'lucide-react';
 
@@ -23,7 +24,9 @@ import flourishL from '/images/flourish-l.svg';
 import brownImg from '/images/brown.png';
 import greenImg from '/images/green.png';
 import mushroomImg from '/images/mushroom.png';
-import toast from 'react-hot-toast';
+import attireSamples from '/images/clothes/samples.png';
+import honeymoonFund from '/images/honeymoon-fund.png';
+import luunaMilo from '/images/luuna-milo.png';
 
 const timeline = [
   ['2:00 pm', 'ceremony'],
@@ -419,7 +422,7 @@ function App() {
                   <p>Carolyn Chin</p>
                 </div>
                 <div className="col-span-1 text-right">
-                  <h4 className="text-lg font-light uppercase">Best Man</h4>
+                  <h4 className="text-lg font-light uppercase">Best Woman</h4>
                   <p>TBA</p>
                 </div>
                 <div className="col-span-1 text-left">
@@ -520,8 +523,23 @@ function App() {
                 />
               </div>
             </div>
+            <div className="border-divider mb-10 flex flex-col items-start gap-4 border-t pt-10 lg:flex-row">
+              <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
+                <h3 className="font-libre-baskerville text-5xl font-semibold text-black capitalize">Attire</h3>
+                <p className="font-libre-baskerville mb-5 text-2xl italic">Clothing Guide</p>
+                <h4 className="mt-6 text-lg font-semibold">Ladies</h4>
+                <p>Knee to Floor length Dress</p>
+                <h4 className="mt-6 text-lg font-semibold">Gentelemen</h4>
+                <p>Barong Tagalog</p>
+              </div>
 
-            <div className="border-divider flex flex-col items-start gap-4 border-t pt-8 lg:flex-row">
+              <div className="flex w-1 grow-3 flex-col justify-stretch">
+                <img src={attireSamples} className="w-full rounded-xl" />
+                <p className="font-poppins text-items px-2 text-right text-xs">For inspiration only</p>
+              </div>
+            </div>
+
+            <div className="border-divider flex flex-col items-start gap-4 border-t pt-10 lg:flex-row">
               <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
                 <h3 className="font-libre-baskerville mb-5 flex flex-col justify-center text-center text-5xl/11 font-extrabold text-black capitalize">
                   The
@@ -555,21 +573,40 @@ function App() {
             </div>
           </div>
           <div className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
-            <div>
-              <img src={donBoscoImg} />
-              <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
-              <p>Don Bosco Chapel Makati</p>
-              <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
-                <p className="text-sm text-blue-900 underline">Google Maps Link</p>
-              </a>
+            <div className="mx-2 mb-10 flex flex-col gap-4 bg-gray-100 p-6">
+              <h3 className="font-libre-baskerville text-center text-4xl font-semibold text-black capitalize italic">Gift Guide</h3>
+              <p>
+                Your presence at our celebration is the greatest gift we could ask for. Should you wish to honor us further, a monetary gift
+                would be warmly appreciated, though never expected.
+              </p>
+              <div className="mt-4 flex flex-col items-center gap-2">
+                <h4 className="text-center text-3xl font-bold">BPI</h4>
+                <img className="w-4/5" src={honeymoonFund} />
+              </div>
             </div>
-            <div className="mt-8">
-              <img src={arugaImg} />
-              <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
-              <p>Aruga Apartments by Rockwell</p>
-              <a href="https://maps.app.goo.gl/cvjaYGtsLuF3TuXp6">
-                <p className="text-sm text-blue-900 underline">Google Maps Link</p>
-              </a>
+            <div className="border-divider mb-10 border-t pt-10">
+              <img src={luunaMilo} className="w-full" />
+              <h3 className="font-libre-baskerville mt-5 mb-1 text-3xl font-semibold text-black capitalize italic">
+                Celebrating from Home
+              </h3>
+              <p>
+                <span className="italic">Woof!</span> We’re so excited to see our favorite humans get married today! We can’t wait to be
+                part of your adventures and share all the cuddles, belly rubs and wagging tails with you. Congratulations and lots of puppy
+                love!
+              </p>
+            </div>
+            <div className="border-divider border-t pt-10">
+              <div className="border">
+                <div className="bg-black p-4 text-white">
+                  <h3 className="font-libre-baskerville text-center text-3xl font-semibold capitalize italic">Guest Awards</h3>
+                </div>
+                <div className="flex flex-col p-4 text-center">
+                  <p>Longest Distance Travelled</p>
+                  <p>First to RSVP</p>
+                  <p>Last Guest to Stay</p>
+                  <p>Most Photos Taken</p>
+                </div>
+              </div>
             </div>
           </div>
         </section>
