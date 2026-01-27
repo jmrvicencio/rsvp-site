@@ -12,6 +12,8 @@ import { guestAtom } from '@/store/store';
 import toast from 'react-hot-toast';
 
 import { CircleAlert, LoaderCircle } from 'lucide-react';
+import RSVP from './routes/Invite/RSVP';
+import WeddingParty from './routes/Invite/WeddingParty';
 
 import { Quote } from 'lucide-react';
 import coupleImg from '/images/couple.png';
@@ -39,162 +41,14 @@ const timeline = [
 
 const invitees = [{ name: 'Eduardo Alde, Jr' }, { name: 'Corazon Alde' }];
 
-function RSVP() {
-  // hooks
-  const { id: guestId } = useParams();
-  const { updateGuest, submitting } = useUpdateGuest(guestId!);
-
-  // local states
-  const [guests, setGuests] = useAtom(guestAtom);
-  const [replies, setReply] = useState<GuestRSVP>({});
-  const [error, setError] = useState(false);
-
-  // computed states
-  const hasSubmitted = guests.repliedAt != undefined;
-  const canResubmit: boolean = useMemo(
-    () => hasSubmitted && Object.keys(guests.invitees).some((key) => guests.invitees[key] != replies[key]),
-    [guests, replies],
-  );
-
-  useEffect(() => {
-    const nextReply = Object.entries(guests.invitees).reduce((acc: GuestRSVP, [name, reply]) => {
-      acc[name] = reply;
-      return acc;
-    }, {});
-    setReply(nextReply);
-  }, [guests]);
-
-  const handleRsvpClicked = (name: string, val: boolean) => () => {
-    const nextReply = { ...replies };
-    nextReply[name] = val;
-
-    setReply(nextReply);
-  };
-
-  const handleSubmitClicked = async () => {
-    const valid = !Object.values(replies).some((val) => typeof val != 'boolean');
-
-    if (!valid) {
-      toast.error('Please make sure all RSVPs are filled');
-      setError(true);
-      console.log(valid);
-      return;
-    }
-
-    const nextGuests: Guest = { ...guests, invitees: replies, repliedAt: new Date().getTime() };
-    await updateGuest(nextGuests);
-    setError(false);
-    setGuests(nextGuests);
-  };
-
-  return (
-    <div className="border-divider flex w-full flex-col items-start justify-stretch gap-4 border-t p-8 px-0 pt-12 sm:px-8 lg:flex-row">
-      <div
-        className="font-poppins text-rsvp relative w-full border border-[#E8E3E3] bg-[#F5F0F0] bg-contain p-6 pt-14 sm:p-16"
-        style={{
-          backgroundImage: `url('${rsvpRImg}')`,
-          backgroundPosition: 'top right',
-          backgroundRepeat: 'no-repeat',
-          backgroundSize: '200px',
-        }}
-      >
-        <h3 className="font-libre-baskerville mb-5 text-7xl font-semibold capitalize">RSVP</h3>
-        <h4 className="font-playfair -mt-6 mb-16">Please kindly reply by July 29</h4>
-        <div>
-          <form className="flex flex-col items-center">
-            {Object.entries(guests.invitees).map(([name, reply], i) => (
-              <div key={i} className="w-full not-first:mt-8">
-                <div className="border-items flex items-end border-b">
-                  <p className="font-bold">M</p>
-                  <p className="font-alex-brush grow text-center text-4xl">{name}</p>
-                </div>
-                <div className="mt-4 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-8">
-                  <label htmlFor={`rsvp-${i}-y`} className="flex w-4/5 cursor-pointer items-center gap-2 sm:w-full">
-                    <input
-                      id={`rsvp-${i}-y`}
-                      className="peer hidden"
-                      type="radio"
-                      name={`rsvp-${i}`}
-                      value="yes"
-                      onChange={handleRsvpClicked(name, true)}
-                      checked={replies[name] == true}
-                    />
-                    <div className="aspect-square h-4 w-4 rounded-full border p-0.5">
-                      {replies[name] == true && <div className="aspect-square h-full w-full rounded-full bg-black" />}
-                    </div>
-                    <p>Accepts Gladly</p>
-                  </label>
-                  <label htmlFor={`rsvp-${i}-n`} className="flex w-4/5 cursor-pointer items-center gap-2 sm:w-full">
-                    <input
-                      id={`rsvp-${i}-n`}
-                      className="peer hidden"
-                      type="radio"
-                      name={`rsvp-${i}`}
-                      value="no"
-                      onChange={handleRsvpClicked(name, false)}
-                      checked={replies[name] == false}
-                    />
-                    <div className="aspect-square h-4 w-4 rounded-full border p-0.5">
-                      {replies[name] == false && <div className="aspect-square h-full w-full rounded-full bg-black" />}
-                    </div>
-                    <p>Decline Regretfully</p>
-                  </label>
-                </div>
-              </div>
-            ))}
-            <div
-              className={`${submitting && 'submitting'} mt-6 flex h-25 flex-col items-center justify-end gap-2 [.submitting]:justify-center`}
-            >
-              {submitting ? (
-                <LoaderCircle className="animate-spin" />
-              ) : hasSubmitted ? (
-                <>
-                  <AnimatePresence>
-                    {canResubmit && (
-                      <motion.input
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        exit={{ scale: 0 }}
-                        type="button"
-                        value="Update Reply"
-                        className={`w-fit cursor-pointer border p-4 py-2`}
-                        onClick={handleSubmitClicked}
-                      />
-                    )}
-                  </AnimatePresence>
-                  <motion.div initial={{ translateY: 50, opacity: 0 }} animate={{ translateY: 0, opacity: 1 }} className="h-6">
-                    <p className="text-sm text-stone-500">
-                      Replied @ <span className="font-semibold">{format(new Date(guests.repliedAt!), 'Pp')}</span>
-                    </p>
-                  </motion.div>
-                </>
-              ) : (
-                <>
-                  <input type="button" value="Send Reply" className="w-fit cursor-pointer border p-4 py-2" onClick={handleSubmitClicked} />
-                  <div className="h-6 text-red-700">
-                    <div className={`${error && 'error'} hidden gap-2 [.error]:flex`}>
-                      <CircleAlert className="stroke-[1.2px]" />
-                      Please make sure all items are filled
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function Timeline() {
   return (
-    <section className="border-divider flex items-center border-b py-8">
-      <h3 className="font-playfair-display mr-8 text-center text-4xl font-bold italic sm:px-0 sm:px-12 sm:text-2xl">
+    <section className="border-divider flex items-center justify-center border-b py-8">
+      <h3 className="font-playfair-display mr-8 px-0 text-center text-4xl font-bold italic sm:px-12 sm:text-2xl">
         Wedding <br />
         Timeline
       </h3>
-      <div className="font-playfair grid w-full grid-cols-1 gap-8 text-xl sm:grid-cols-3 lg:flex">
+      <div className="font-playfair grid w-fit grid-cols-1 gap-8 text-xl sm:w-full sm:grid-cols-3 lg:flex">
         {timeline.map(([time, event], i) => (
           <div key={i} className="flex grow flex-col items-center text-center">
             <p className="font-libre-baskerville font-bold">{time}</p>
@@ -206,7 +60,7 @@ function Timeline() {
   );
 }
 
-function Countdown() {
+function Countdown({ isSm }: { isSm: boolean }) {
   const [year, setYear] = useState(0);
   const [month, setMonth] = useState(0);
   const [day, setDay] = useState(0);
@@ -274,27 +128,27 @@ function Countdown() {
   return (
     <section className="border-divider flex items-center border-b py-8">
       <div className="flex w-full flex-col gap-4">
-        <h3 className="font-playfair-display mr-8 px-12 text-center text-4xl font-bold italic sm:px-0 sm:text-2xl">Days until Forever</h3>
-        <div className="flex w-full items-center justify-center gap-12">
+        <h3 className="font-playfair-display px-12 text-center text-3xl font-bold italic sm:px-0">Days until Forever</h3>
+        <div className="grid w-full grid-cols-5 items-center justify-center gap-2 sm:flex sm:gap-12">
           <div className="flex flex-col items-center">
-            <p className="text-4xl font-bold">{month}</p>
-            <p className="font-playfair uppercase">Months</p>
+            <p className="text-xl font-bold sm:text-4xl">{month}</p>
+            <p className="font-playfair text-sm uppercase sm:text-base">{!isSm ? 'Months' : 'Mth'}</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="text-4xl font-bold">{day}</p>
-            <p className="font-playfair uppercase">Days</p>
+            <p className="text-xl font-bold sm:text-4xl">{day}</p>
+            <p className="font-playfair text-sm uppercase sm:text-base">{!isSm ? 'Days' : 'Day'}</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="text-4xl font-bold">{hour}</p>
-            <p className="font-playfair uppercase">Hours</p>
+            <p className="text-xl font-bold sm:text-4xl">{hour}</p>
+            <p className="font-playfair text-sm uppercase sm:text-base">{!isSm ? 'Hours' : 'Hr'}</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="text-4xl font-bold">{minute}</p>
-            <p className="font-playfair uppercase">Minutes</p>
+            <p className="text-xl font-bold sm:text-4xl">{minute}</p>
+            <p className="font-playfair text-sm uppercase sm:text-base">{!isSm ? 'Minutes' : 'Min'}</p>
           </div>
           <div className="flex flex-col items-center">
-            <p className="text-4xl font-bold">{second}</p>
-            <p className="font-playfair uppercase">Seconds</p>
+            <p className="text-xl font-bold sm:text-4xl">{second}</p>
+            <p className="font-playfair text-sm uppercase sm:text-base">{!isSm ? 'Seconds' : 'Sec'}</p>
           </div>
         </div>
       </div>
@@ -306,7 +160,7 @@ function App() {
   // hooks
   const { id: guestId } = useParams();
   const { guest: guestQuery, loading } = useGuest(guestId!);
-  const { isSm } = useWidthCheck();
+  const { isSm, isMd } = useWidthCheck();
 
   // local states
   const [guests, setGuests] = useAtom(guestAtom);
@@ -355,7 +209,7 @@ function App() {
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
             <div className="mb-10 flex flex-col items-start gap-4 lg:flex-row">
               <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
-                <h3 className="font-libre-baskerville mb-5 text-4xl font-semibold text-black capitalize">
+                <h3 className="font-libre-baskerville mb-5 text-3xl font-semibold text-black capitalize sm:text-4xl">
                   You're Cordially Invited To Share The Couple's Special Day
                 </h3>
                 <p>
@@ -376,28 +230,28 @@ function App() {
             <RSVP />
           </div>
           <div className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
-            <div className="tg grid grid-cols-[2fr_3fr] gap-4 sm:block">
-              {isSm ? (
-                <div className="aspect-square bg-cover bg-center" style={{ backgroundImage: `url('${donBoscoImg}')` }} />
+            <div className="tg grid grid-cols-[2fr_3fr] gap-4 md:block">
+              {isMd ? (
+                <div className="aspect-3/2 bg-cover bg-center" style={{ backgroundImage: `url('${donBoscoImg}')` }} />
               ) : (
                 <img src={donBoscoImg} />
               )}
               <div>
-                <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
+                <h3 className="font-libre-baskerville mb-1 text-2xl font-semibold text-black capitalize md:mt-5">Ceremony Venue</h3>
                 <p>Don Bosco Chapel Makati</p>
                 <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
                   <p className="text-sm text-blue-900 underline">Google Maps Link</p>
                 </a>
               </div>
             </div>
-            <div className="tg mt-8 grid grid-cols-[2fr_3fr] gap-4 sm:block">
+            <div className="tg mt-8 grid grid-cols-[2fr_3fr] gap-4 md:block">
               {isSm ? (
-                <div className="aspect-square bg-cover bg-center" style={{ backgroundImage: `url('${arugaImg}')` }} />
+                <div className="aspect-3/2 bg-cover bg-center" style={{ backgroundImage: `url('${arugaImg}')` }} />
               ) : (
                 <img src={arugaImg} />
               )}
               <div>
-                <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
+                <h3 className="font-libre-baskerville mb-1 text-2xl font-semibold text-black capitalize md:mt-5">Ceremony Venue</h3>
                 <p>Aruga Apartments by Rockwell</p>
                 <a href="https://maps.app.goo.gl/cvjaYGtsLuF3TuXp6">
                   <p className="text-sm text-blue-900 underline">Google Maps Link</p>
@@ -406,123 +260,29 @@ function App() {
             </div>
           </div>
         </section>
-        <Timeline />
+        <Countdown isSm={isSm} />
         <section className="border-divider border-b py-8">
-          <div className="font-playfair border-rsvp mx-auto grid max-w-3xl border px-8 text-center text-2xl font-bold">
-            <div className="border-divider border-b py-8">
-              <div className="mb-10 flex w-full flex-row items-center justify-center gap-2">
-                <img src={flourishL} />
-                <div className="font-light">
-                  <h3 className="uppercase">Primary Sponsors</h3>
-                  <p className="text-sm leading-2">to stand witness to our vows</p>
-                </div>
-                <img src={flourishR} />
-              </div>
-              <div className="grid grid-flow-dense grid-cols-2 gap-x-8 gap-y-6">
-                <div className="col-span-1 text-right">
-                  <h4 className="text-lg font-light uppercase">Ninongs</h4>
-                  <p>Ricky Cano</p>
-                  <p>Eduardo Alde, Jr</p>
-                  <p>John Fernandez</p>
-                  <p>Alfredo Reyes</p>
-                  <p>Abelardo Pagsibigay, Jr.</p>
-                </div>
-                <div className="col-span-1 text-left">
-                  <h4 className="text-lg font-light uppercase">Ninongs</h4>
-                  <p>Ayeen Vicencio</p>
-                  <p>Ma. Cristina Aguas</p>
-                  <p>Filipina Sagana</p>
-                  <p>Paz Nama</p>
-                  <p>Carolyn Chin</p>
-                </div>
-                <div className="col-span-1 text-right">
-                  <h4 className="text-lg font-light uppercase">Best Woman</h4>
-                  <p>TBA</p>
-                </div>
-                <div className="col-span-1 text-left">
-                  <h4 className="text-lg font-light uppercase">Man of Honor</h4>
-                  <p>Jayms Sagana</p>
-                </div>
-              </div>
-            </div>
-            <div className="py-8">
-              <div className="mb-10 flex w-full flex-row items-center justify-center gap-2">
-                <img src={flourishL} />
-                <div className="font-light">
-                  <h3 className="uppercase">Secondary Sponsors</h3>
-                  <p className="text-sm leading-2">to assist with our needs</p>
-                </div>
-                <img src={flourishR} />
-              </div>
-              <div className="grid grid-flow-dense grid-cols-2 gap-x-8 gap-y-6">
-                <div className="col-span-2">
-                  <h4 className="text-lg font-light uppercase">Veil</h4>
-                  <p>Marlon Demafeliz</p>
-                  <p>Barbie Olegario</p>
-                </div>
-                <div className="col-span-2">
-                  <h4 className="text-lg font-light uppercase">Cord</h4>
-                  <p>Erik Ramos</p>
-                  <p>Renee Ramos</p>
-                </div>
-                <div className="col-span-2">
-                  <h4 className="text-lg font-light uppercase">Candle</h4>
-                  <p>Julian Nepomuceno</p>
-                  <p>Sophia Nuñez</p>
-                </div>
-                <div className="col-span-1 text-right">
-                  <h4 className="text-lg font-light uppercase">Ninongs</h4>
-                  <p>Marlon Demafeliz</p>
-                  <p>Julian Nepomuceno</p>
-                  <p>Nestor Joble</p>
-                  <p>Erik Ramos</p>
-                </div>
-                <div className="col-span-1 text-left">
-                  <h4 className="text-lg font-light uppercase">Ninongs</h4>
-                  <p>Barbie Olegario</p>
-                  <p>Sophia Nuñez</p>
-                  <p>Helen Grace Danseco</p>
-                  <p>Renee Ramos</p>
-                </div>
-                <div className="col-span-1 text-center">
-                  <h4 className="text-lg font-light uppercase">Coin Bearer</h4>
-                  <p>TBA</p>
-                </div>
-                <div className="col-span-1 text-center">
-                  <h4 className="text-lg font-light uppercase">Bible Bearer</h4>
-                  <p>TBA</p>
-                </div>
-                <div className="col-span-1 text-center">
-                  <h4 className="text-lg font-light uppercase">Ring Bearer</h4>
-                  <p>Eli Reyes</p>
-                </div>
-                <div className="col-span-1 text-center">
-                  <h4 className="text-lg font-light uppercase">Flower Girls</h4>
-                  <p>Bridgette Sagana</p>
-                </div>
-              </div>
-            </div>
-          </div>
+          <WeddingParty />
         </section>
-        <Countdown />
+        <Timeline />
         <section className="border-divider flex flex-col border-b py-8 md:grid md:grid-cols-17">
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
-            <div className="mb-10 flex flex-col items-start gap-4 lg:flex-row">
-              <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
-                <h3 className="font-libre-baskerville text-5xl font-semibold text-black capitalize">Our Colors</h3>
+            <div className="mb-10 flex flex-col items-start gap-4 sm:flex-row">
+              <div className="text-items font-poppins w-full shrink grow-2 sm:w-1">
+                <h3 className="font-libre-baskerville text-4xl font-semibold text-black capitalize sm:text-5xl">Our Colors</h3>
                 <p className="font-libre-baskerville mb-5 text-2xl italic">Olive Garden</p>
                 <div className="-gap-5 flex">
-                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#818252]" />
-                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#575628]" />
-                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#5D4D36]" />
-                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#B8AD9B]" />
-                  <div className="-ml-4 aspect-square w-1/6 rounded-full border-5 border-white bg-[#E3D3BC]" />
+                  <div className="-ml-4 aspect-square w-1/5 max-w-18 min-w-12 rounded-full border-5 border-white bg-[#818252] sm:w-1/6" />
+                  <div className="-ml-4 aspect-square w-1/5 max-w-18 min-w-12 rounded-full border-5 border-white bg-[#575628] sm:w-1/6" />
+                  <div className="-ml-4 aspect-square w-1/5 max-w-18 min-w-12 rounded-full border-5 border-white bg-[#5D4D36] sm:w-1/6" />
+                  <div className="-ml-4 aspect-square w-1/5 max-w-18 min-w-12 rounded-full border-5 border-white bg-[#B8AD9B] sm:w-1/6" />
+                  <div className="-ml-4 aspect-square w-1/5 max-w-18 min-w-12 rounded-full border-5 border-white bg-[#E3D3BC] sm:w-1/6" />
                 </div>
                 <p className="mt-6 text-lg font-semibold">Earth-inspired greens and browns </p>
                 <p>simple, natural, and full of warmth.</p>
               </div>
 
-              <div className="flex aspect-4/3 h-full w-1 grow-3 flex-row justify-stretch">
+              <div className="flex aspect-5/2 h-full w-full grow-3 flex-row justify-stretch sm:aspect-4/3 sm:w-1">
                 <div
                   className="h-full w-1 grow-2 bg-cover bg-center transition-all duration-350 ease-in-out hover:grow-3"
                   style={{ backgroundImage: `url('${brownImg}')` }}
@@ -537,9 +297,9 @@ function App() {
                 />
               </div>
             </div>
-            <div className="border-divider mb-10 flex flex-col items-start gap-4 border-t pt-10 lg:flex-row">
-              <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
-                <h3 className="font-libre-baskerville text-5xl font-semibold text-black capitalize">Attire</h3>
+            <div className="border-divider mb-10 flex flex-col items-start gap-4 border-t pt-10 sm:flex-row">
+              <div className="text-items font-poppins w-full shrink grow-2 sm:w-1">
+                <h3 className="font-libre-baskerville text-4xl font-semibold text-black capitalize sm:text-5xl">Attire</h3>
                 <p className="font-libre-baskerville mb-5 text-2xl italic">Clothing Guide</p>
                 <h4 className="mt-6 text-lg font-semibold">Ladies</h4>
                 <p>Knee to Floor length Dress</p>
@@ -547,7 +307,7 @@ function App() {
                 <p>Barong Tagalog</p>
               </div>
 
-              <div className="flex w-1 grow-3 flex-col justify-stretch">
+              <div className="mt-4 flex w-full grow-3 flex-col justify-stretch sm:mt-0 sm:w-1">
                 <img src={attireSamples} className="w-full rounded-xl" />
                 <p className="font-poppins text-items px-2 text-right text-xs">For inspiration only</p>
               </div>
@@ -555,7 +315,7 @@ function App() {
 
             <div className="border-divider flex flex-col items-start gap-4 border-t pt-10 lg:flex-row">
               <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
-                <h3 className="font-libre-baskerville mb-5 flex flex-col justify-center text-center text-5xl/11 font-extrabold text-black capitalize">
+                <h3 className="font-libre-baskerville mb-12 flex flex-col justify-center text-center text-5xl/11 font-extrabold text-black capitalize sm:mb-5">
                   The
                   <br />
                   <span className="">Journey</span>
@@ -625,7 +385,7 @@ function App() {
           </div>
         </section>
       </main>
-      <footer className="font-poppins text-items py-8 text-xs">
+      <footer className="font-poppins text-items px-5 py-8 text-xs sm:px-4">
         <p>
           <span className="font-semibold">© 2026</span> John Vicencio. All Rights Reserved
         </p>

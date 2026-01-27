@@ -325,7 +325,7 @@ function Dashboard() {
     <>
       {overlay && <Overlay />}
       <div className="font-poppins text-items min-h-dvh w-full bg-white">
-        <div className="mx-auto flex min-h-dvh max-w-280 min-w-full items-stretch">
+        <div className="mx-auto flex min-h-dvh max-w-280 min-w-full items-stretch sm:min-w-0">
           <div className="border-divider min-w-200 grow border-x pt-12">
             <div className="flex items-end justify-between px-8">
               <h1 className="text-3xl font-medium text-black">Guest List</h1>
