@@ -194,9 +194,9 @@ function App() {
         <h3 className="font-poppins mb-4 text-center text-black/60 uppercase not-sm:hidden">John Vicencio - Jaynifer Sagana</h3>
         <div className="relative">
           <div className="@container relative flex w-full items-center select-none lg:absolute">
-            <a href="#" className="mx-auto w-fit">
+            <div className="mx-auto w-fit">
               <h1 className="font-chomsky w-fit text-3xl sm:text-4xl lg:text-6xl">The Proposal Post</h1>
-            </a>
+            </div>
           </div>
           <div>
             <div className="font-poppins bg-divider/10 text-items border-divider mt-3 flex w-full justify-between border-t px-4 py-3 text-xs font-light sm:hidden sm:text-base lg:mt-0 lg:flex lg:border-t-0 lg:bg-transparent lg:px-0 lg:pt-1 lg:pb-0">
@@ -255,7 +255,7 @@ function App() {
           </div>
           <div
             ref={venueRef}
-            className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4"
+            className="border-divider text-items font-poppins col-span-5 border-t py-16 pl-0 md:border-t-0 md:border-l md:py-0 md:pl-4"
           >
             <div className="tg grid grid-cols-[2fr_3fr] gap-4 md:block">
               {isMd ? (
@@ -288,13 +288,13 @@ function App() {
           </div>
         </section>
         <Countdown isSm={isSm} />
-        <section className="border-divider border-b py-8">
+        <section className="border-divider border-b py-16 md:py-8">
           <WeddingParty />
         </section>
         <Timeline />
         <section className="border-divider flex flex-col border-b py-8 md:grid md:grid-cols-17">
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
-            <div ref={colorsRef} className="mb-10 flex flex-col items-start gap-4 sm:flex-row">
+            <div ref={colorsRef} className="mb-10 flex flex-col items-start gap-4 py-16 sm:flex-row md:py-0">
               <div className="text-items font-poppins w-full shrink grow-2 sm:w-1">
                 <h3 className="font-libre-baskerville text-4xl font-semibold text-black capitalize sm:text-5xl">Our Colors</h3>
                 <p className="font-libre-baskerville mb-5 text-2xl italic">Olive Garden</p>
@@ -324,7 +324,10 @@ function App() {
                 />
               </div>
             </div>
-            <div ref={attireRef} className="border-divider mb-10 flex flex-col items-start gap-4 border-t pt-10 sm:flex-row">
+            <div
+              ref={attireRef}
+              className="border-divider mb-10 flex flex-col items-start gap-4 border-t py-16 pt-16 sm:flex-row md:py-0 md:pt-10"
+            >
               <div className="text-items font-poppins w-full shrink grow-2 sm:w-1">
                 <h3 className="font-libre-baskerville text-4xl font-semibold text-black capitalize sm:text-5xl">Attire</h3>
                 <p className="font-libre-baskerville mb-5 text-2xl italic">Clothing Guide</p>
