@@ -27,6 +27,7 @@ import mushroomImg from '/images/mushroom.png';
 import attireSamples from '/images/clothes/samples.png';
 import honeymoonFund from '/images/honeymoon-fund.png';
 import luunaMilo from '/images/luuna-milo.png';
+import { useWidthCheck } from '@/hooks/useWidthCheck';
 
 const timeline = [
   ['2:00 pm', 'ceremony'],
@@ -87,9 +88,9 @@ function RSVP() {
   };
 
   return (
-    <div className="border-divider flex w-full flex-col items-start justify-stretch gap-4 border-t p-8 pt-12 lg:flex-row">
+    <div className="border-divider flex w-full flex-col items-start justify-stretch gap-4 border-t p-8 px-0 pt-12 sm:px-8 lg:flex-row">
       <div
-        className="font-poppins text-rsvp relative w-full border border-[#E8E3E3] bg-[#F5F0F0] bg-contain p-16 pt-14"
+        className="font-poppins text-rsvp relative w-full border border-[#E8E3E3] bg-[#F5F0F0] bg-contain p-6 pt-14 sm:p-16"
         style={{
           backgroundImage: `url('${rsvpRImg}')`,
           backgroundPosition: 'top right',
@@ -107,8 +108,8 @@ function RSVP() {
                   <p className="font-bold">M</p>
                   <p className="font-alex-brush grow text-center text-4xl">{name}</p>
                 </div>
-                <div className="mt-4 flex justify-center gap-8">
-                  <label htmlFor={`rsvp-${i}-y`} className="flex cursor-pointer items-center gap-2">
+                <div className="mt-4 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-8">
+                  <label htmlFor={`rsvp-${i}-y`} className="flex w-4/5 cursor-pointer items-center gap-2 sm:w-full">
                     <input
                       id={`rsvp-${i}-y`}
                       className="peer hidden"
@@ -121,9 +122,9 @@ function RSVP() {
                     <div className="aspect-square h-4 w-4 rounded-full border p-0.5">
                       {replies[name] == true && <div className="aspect-square h-full w-full rounded-full bg-black" />}
                     </div>
-                    Accepts Gladly
+                    <p>Accepts Gladly</p>
                   </label>
-                  <label htmlFor={`rsvp-${i}-n`} className="flex cursor-pointer items-center gap-2">
+                  <label htmlFor={`rsvp-${i}-n`} className="flex w-4/5 cursor-pointer items-center gap-2 sm:w-full">
                     <input
                       id={`rsvp-${i}-n`}
                       className="peer hidden"
@@ -136,7 +137,7 @@ function RSVP() {
                     <div className="aspect-square h-4 w-4 rounded-full border p-0.5">
                       {replies[name] == false && <div className="aspect-square h-full w-full rounded-full bg-black" />}
                     </div>
-                    Decline Regretfully
+                    <p>Decline Regretfully</p>
                   </label>
                 </div>
               </div>
@@ -189,7 +190,7 @@ function RSVP() {
 function Timeline() {
   return (
     <section className="border-divider flex items-center border-b py-8">
-      <h3 className="font-playfair-display mr-8 px-12 text-center text-4xl font-bold italic sm:px-0 sm:text-2xl">
+      <h3 className="font-playfair-display mr-8 text-center text-4xl font-bold italic sm:px-0 sm:px-12 sm:text-2xl">
         Wedding <br />
         Timeline
       </h3>
@@ -305,6 +306,7 @@ function App() {
   // hooks
   const { id: guestId } = useParams();
   const { guest: guestQuery, loading } = useGuest(guestId!);
+  const { isSm } = useWidthCheck();
 
   // local states
   const [guests, setGuests] = useAtom(guestAtom);
@@ -374,21 +376,33 @@ function App() {
             <RSVP />
           </div>
           <div className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
-            <div>
-              <img src={donBoscoImg} />
-              <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
-              <p>Don Bosco Chapel Makati</p>
-              <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
-                <p className="text-sm text-blue-900 underline">Google Maps Link</p>
-              </a>
+            <div className="tg grid grid-cols-[2fr_3fr] gap-4 sm:block">
+              {isSm ? (
+                <div className="aspect-square bg-cover bg-center" style={{ backgroundImage: `url('${donBoscoImg}')` }} />
+              ) : (
+                <img src={donBoscoImg} />
+              )}
+              <div>
+                <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
+                <p>Don Bosco Chapel Makati</p>
+                <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
+                  <p className="text-sm text-blue-900 underline">Google Maps Link</p>
+                </a>
+              </div>
             </div>
-            <div className="mt-8">
-              <img src={arugaImg} />
-              <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
-              <p>Aruga Apartments by Rockwell</p>
-              <a href="https://maps.app.goo.gl/cvjaYGtsLuF3TuXp6">
-                <p className="text-sm text-blue-900 underline">Google Maps Link</p>
-              </a>
+            <div className="tg mt-8 grid grid-cols-[2fr_3fr] gap-4 sm:block">
+              {isSm ? (
+                <div className="aspect-square bg-cover bg-center" style={{ backgroundImage: `url('${arugaImg}')` }} />
+              ) : (
+                <img src={arugaImg} />
+              )}
+              <div>
+                <h3 className="font-libre-baskerville mt-5 mb-1 text-2xl font-semibold text-black capitalize">Ceremony Venue</h3>
+                <p>Aruga Apartments by Rockwell</p>
+                <a href="https://maps.app.goo.gl/cvjaYGtsLuF3TuXp6">
+                  <p className="text-sm text-blue-900 underline">Google Maps Link</p>
+                </a>
+              </div>
             </div>
           </div>
         </section>
