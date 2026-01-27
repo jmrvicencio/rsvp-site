@@ -1,4 +1,4 @@
-import { MouseEvent, useState, useMemo } from 'react';
+import { MouseEvent, useState, useMemo, useRef, RefObject } from 'react';
 // import { useParams, useLocation } from 'react-router-dom';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect } from 'react';
@@ -162,6 +162,12 @@ function App() {
   const { guest: guestQuery, loading } = useGuest(guestId!);
   const { isSm, isMd } = useWidthCheck();
 
+  const rsvpRef = useRef<HTMLDivElement>(null);
+  const venueRef = useRef<HTMLDivElement>(null);
+  const colorsRef = useRef<HTMLDivElement>(null);
+  const attireRef = useRef<HTMLDivElement>(null);
+  const giftRef = useRef<HTMLDivElement>(null);
+
   // local states
   const [guests, setGuests] = useAtom(guestAtom);
 
@@ -170,6 +176,17 @@ function App() {
       setGuests(guestQuery);
     }
   }, [guestQuery]);
+
+  // ----------------
+  // Event Listener
+  // ----------------
+
+  const handleNavClicked = (target: RefObject<HTMLDivElement | null>) => () => {
+    target.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'start',
+    });
+  };
 
   return (
     <div className="font-libre-baskerville relative mx-auto w-full max-w-350 px-0 sm:px-10 lg:px-18">
@@ -192,11 +209,21 @@ function App() {
               </div>
             </div>
             <div className="font-poppins mt-6 flex w-full justify-center gap-12 text-lg font-light not-sm:hidden">
-              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black">RSVP</a>
-              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black">Venue</a>
-              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black">Dress Code</a>
-              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black">Lorem</a>
-              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black">Ipsum</a>
+              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(rsvpRef)}>
+                RSVP
+              </a>
+              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(venueRef)}>
+                Venue
+              </a>
+              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(colorsRef)}>
+                Colors
+              </a>
+              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(attireRef)}>
+                Attire
+              </a>
+              <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(giftRef)}>
+                Gift Guide
+              </a>
             </div>
           </div>
         </div>
@@ -216,9 +243,6 @@ function App() {
                   Dear <span className="relative bg-yellow-200 font-bold text-black">{guests.nickname}</span>, the couple would love it if
                   you could make it to their wedding on <span className="font-bold text-black">August 29, 2026</span>
                 </p>
-                <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
-                  <p className="text-sm text-blue-900 underline">Jump to RSVP</p>
-                </a>
                 <div className="border-divider my-5 border-l pl-4">
                   <Quote className="w-4 stroke-black/40" />
                   <p>I don't think we'd be able stop crying if they couldn't make it</p>
@@ -227,9 +251,12 @@ function App() {
               </div>
               <img src={coupleImg} className="w-full shrink grow-3 lg:w-1" />
             </div>
-            <RSVP />
+            <RSVP ref={rsvpRef} />
           </div>
-          <div className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
+          <div
+            ref={venueRef}
+            className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4"
+          >
             <div className="tg grid grid-cols-[2fr_3fr] gap-4 md:block">
               {isMd ? (
                 <div className="aspect-3/2 bg-cover bg-center" style={{ backgroundImage: `url('${donBoscoImg}')` }} />
@@ -267,7 +294,7 @@ function App() {
         <Timeline />
         <section className="border-divider flex flex-col border-b py-8 md:grid md:grid-cols-17">
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
-            <div className="mb-10 flex flex-col items-start gap-4 sm:flex-row">
+            <div ref={colorsRef} className="mb-10 flex flex-col items-start gap-4 sm:flex-row">
               <div className="text-items font-poppins w-full shrink grow-2 sm:w-1">
                 <h3 className="font-libre-baskerville text-4xl font-semibold text-black capitalize sm:text-5xl">Our Colors</h3>
                 <p className="font-libre-baskerville mb-5 text-2xl italic">Olive Garden</p>
@@ -297,7 +324,7 @@ function App() {
                 />
               </div>
             </div>
-            <div className="border-divider mb-10 flex flex-col items-start gap-4 border-t pt-10 sm:flex-row">
+            <div ref={attireRef} className="border-divider mb-10 flex flex-col items-start gap-4 border-t pt-10 sm:flex-row">
               <div className="text-items font-poppins w-full shrink grow-2 sm:w-1">
                 <h3 className="font-libre-baskerville text-4xl font-semibold text-black capitalize sm:text-5xl">Attire</h3>
                 <p className="font-libre-baskerville mb-5 text-2xl italic">Clothing Guide</p>
@@ -347,7 +374,7 @@ function App() {
             </div>
           </div>
           <div className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
-            <div className="mx-2 mb-10 flex flex-col gap-4 bg-gray-100 p-6">
+            <div ref={giftRef} className="mx-2 mb-10 flex flex-col gap-4 bg-gray-100 p-6">
               <h3 className="font-libre-baskerville text-center text-4xl font-semibold text-black capitalize italic">Gift Guide</h3>
               <p>
                 Your presence at our celebration is the greatest gift we could ask for. Should you wish to honor us further, a monetary gift

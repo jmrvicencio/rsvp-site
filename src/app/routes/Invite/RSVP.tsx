@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, type RefObject } from 'react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
@@ -13,7 +13,7 @@ import { CircleAlert, LoaderCircle } from 'lucide-react';
 
 import rsvpRImg from '/images/RSVP-R.png';
 
-function RSVP() {
+function RSVP({ ref }: { ref: RefObject<HTMLDivElement | null> }) {
   // hooks
   const { id: guestId } = useParams();
   const { updateGuest, submitting } = useUpdateGuest(guestId!);
@@ -62,7 +62,10 @@ function RSVP() {
   };
 
   return (
-    <div className="border-divider flex w-full flex-col items-start justify-stretch gap-4 border-t p-8 px-0 pt-12 sm:px-8 lg:flex-row">
+    <div
+      ref={ref}
+      className="border-divider flex w-full flex-col items-start justify-stretch gap-4 border-t p-8 px-0 pt-12 sm:px-8 lg:flex-row"
+    >
       <div
         className="font-poppins text-rsvp relative w-full border border-[#E8E3E3] bg-[#F5F0F0] bg-contain p-6 pt-14 sm:p-16"
         style={{
