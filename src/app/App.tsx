@@ -1,28 +1,21 @@
-import { MouseEvent, useState, useMemo, useRef, RefObject } from 'react';
-// import { useParams, useLocation } from 'react-router-dom';
-import { AnimatePresence, motion } from 'motion/react';
+import { useState, useRef, RefObject } from 'react';
 import { useEffect } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
-import { format, getDaysInMonth } from 'date-fns';
+import { useParams } from 'react-router-dom';
+import { getDaysInMonth } from 'date-fns';
 import { useAtom } from 'jotai';
-import { Guest, GuestRSVP } from '@/features/dashboard/types';
 import { useGuest } from '@/features/guests/hooks/useGuest';
-import { useUpdateGuest } from '@/features/guests/hooks/useSetGuest';
-import { guestAtom } from '@/store/store';
-import toast from 'react-hot-toast';
+import { guestAtom, showMobileMenuAtom } from '@/store/store';
+import useLockBodyScroll from '@/hooks/useLockBodyScroll';
+import { AnimatePresence, motion } from 'motion/react';
 
-import { CircleAlert, LoaderCircle } from 'lucide-react';
 import RSVP from './routes/Invite/RSVP';
 import WeddingParty from './routes/Invite/WeddingParty';
 
-import { Quote } from 'lucide-react';
+import { Quote, Menu } from 'lucide-react';
 import coupleImg from '/images/couple.png';
 import donBoscoImg from '/images/don_bosco.png';
 import arugaImg from '/images/aruga.png';
 import storyOfUsImg from '/images/story-of-us.png';
-import rsvpRImg from '/images/RSVP-R.png';
-import flourishR from '/images/flourish-r.svg';
-import flourishL from '/images/flourish-l.svg';
 import brownImg from '/images/brown.png';
 import greenImg from '/images/green.png';
 import mushroomImg from '/images/mushroom.png';
@@ -38,8 +31,6 @@ const timeline = [
   ['5:30 pm', 'reception'],
   ['8:00 pm', 'final send-off'],
 ];
-
-const invitees = [{ name: 'Eduardo Alde, Jr' }, { name: 'Corazon Alde' }];
 
 function Timeline() {
   return (
@@ -67,7 +58,6 @@ function Countdown({ isSm }: { isSm: boolean }) {
   const [hour, setHour] = useState(0);
   const [minute, setMinute] = useState(0);
   const [second, setSecond] = useState(0);
-  // const [endDate] = useState(new Date(2026, 1, 5, 20, 51, 20));
   const [endDate] = useState(new Date(2026, 7, 29, 14));
 
   useEffect(() => {
@@ -156,6 +146,61 @@ function Countdown({ isSm }: { isSm: boolean }) {
   );
 }
 
+function MobileMenu({
+  rsvpRef,
+  venueRef,
+  colorsRef,
+  attireRef,
+  giftRef,
+  onNavClicked: handleNavClicked,
+}: {
+  rsvpRef: RefObject<HTMLDivElement | null>;
+  venueRef: RefObject<HTMLDivElement | null>;
+  colorsRef: RefObject<HTMLDivElement | null>;
+  attireRef: RefObject<HTMLDivElement | null>;
+  giftRef: RefObject<HTMLDivElement | null>;
+  onNavClicked: (ref: RefObject<HTMLDivElement | null>) => () => void;
+}) {
+  const [showMobileMenu, setShowMobileMenu] = useAtom(showMobileMenuAtom);
+
+  const handleMenuClicked = () => {
+    setShowMobileMenu(false);
+  };
+
+  return (
+    <motion.div
+      initial={{ translateX: '100%' }}
+      exit={{ translateX: '100%' }}
+      animate={{ translateX: 0 }}
+      transition={{
+        type: 'tween',
+        ease: 'easeOut',
+        duration: 0.25,
+      }}
+      className="absolute inset-0 z-1 bg-gray-200/30 backdrop-blur-xl"
+      onClick={handleMenuClicked}
+    >
+      <div className="font-poppins flex h-dvh w-full flex-col items-center justify-center gap-8 text-3xl font-bold">
+        <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(rsvpRef)}>
+          RSVP
+        </a>
+        <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(venueRef)}>
+          Venue
+        </a>
+        <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(colorsRef)}>
+          Colors
+        </a>
+        <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(attireRef)}>
+          Attire
+        </a>
+        <a className="border-b-2 border-black/0 py-2 hover:cursor-pointer hover:border-black" onClick={handleNavClicked(giftRef)}>
+          Gift Guide
+        </a>
+      </div>
+    </motion.div>
+  );
+}
+
 function App() {
   // hooks
   const { id: guestId } = useParams();
@@ -170,6 +215,9 @@ function App() {
 
   // local states
   const [guests, setGuests] = useAtom(guestAtom);
+  const [showMobileMenu, setShowMobileMenu] = useAtom(showMobileMenuAtom);
+
+  useLockBodyScroll(showMobileMenu);
 
   useEffect(() => {
     if (guestQuery != undefined) {
@@ -188,8 +236,24 @@ function App() {
     });
   };
 
+  const handleMenuClicked = () => {
+    setShowMobileMenu(true);
+  };
+
   return (
     <div className="font-libre-baskerville relative mx-auto w-full max-w-350 px-0 sm:px-10 lg:px-18">
+      <AnimatePresence>
+        {showMobileMenu && (
+          <MobileMenu
+            rsvpRef={rsvpRef}
+            venueRef={venueRef}
+            colorsRef={colorsRef}
+            attireRef={attireRef}
+            giftRef={giftRef}
+            onNavClicked={handleNavClicked}
+          />
+        )}
+      </AnimatePresence>
       <header className="border-divider flex w-full flex-col items-stretch border-b pt-3 pb-0 sm:border-black sm:pt-10 sm:pb-0 after:sm:mt-2 after:sm:mb-1 after:sm:w-full after:sm:border-b">
         <h3 className="font-poppins mb-4 text-center text-black/60 uppercase not-sm:hidden">John Vicencio - Jaynifer Sagana</h3>
         <div className="relative">
@@ -197,6 +261,14 @@ function App() {
             <div className="mx-auto w-fit">
               <h1 className="font-chomsky w-fit text-3xl sm:text-4xl lg:text-6xl">The Proposal Post</h1>
             </div>
+            {isSm && (
+              <div
+                onClick={handleMenuClicked}
+                className="border-divider absolute right-2 flex aspect-square h-8 w-8 items-center justify-center rounded-md border"
+              >
+                <Menu />
+              </div>
+            )}
           </div>
           <div>
             <div className="font-poppins bg-divider/10 text-items border-divider mt-3 flex w-full justify-between border-t px-4 py-3 text-xs font-light sm:hidden sm:text-base lg:mt-0 lg:flex lg:border-t-0 lg:bg-transparent lg:px-0 lg:pt-1 lg:pb-0">
