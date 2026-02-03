@@ -13,6 +13,7 @@ import { useAtom } from 'jotai';
 import { useGuests } from '@/features/dashboard/hooks/useGuests';
 import { Link as LinkIcon, ChevronsUpDown, ArrowDown, ArrowUp } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { AnimatePresence, motion } from 'motion/react';
 
 function AddGuestOverlay() {
   // Refs
@@ -229,12 +230,19 @@ function Dashboard() {
   // hooks
   const nav = useNavigate();
 
-  // local states
-  const [overlay, setOverlay] = useAtom(showOverlayAtom);
+  // Guests
   const { guests: guestsQuery } = useGuests();
-  const [guests, setGuests] = useState([...guestsQuery]);
+  const [guests, setGuests] = useState<[string, Guest][]>([...guestsQuery]);
+  const [allSelected, setAllSelected] = useState(false);
+  const [selectedGuests, setSelectedGuests] = useState<Set<string>>(new Set<string>());
+
+  // Overlay
+  const [overlay, setOverlay] = useAtom(showOverlayAtom);
+
+  // Table
   const [sortType, setSortType] = useState<SortType>('nickname');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [isSelecting, setIsSelecting] = useState(false);
 
   // -------------------------------
   // Effects
@@ -244,6 +252,7 @@ function Dashboard() {
     setGuests([...guestsQuery]);
   }, [guestsQuery]);
 
+  // Handle Column sorting
   useEffect(() => {
     console.log(guestsQuery);
     let nextGuests: [string, Guest][] = [];
@@ -308,6 +317,10 @@ function Dashboard() {
     setOverlay(true);
   };
 
+  const handleSelectClicked = () => {
+    setIsSelecting((prev) => !prev);
+  };
+
   const handleGuestClicked = (id: string) => async () => {
     const url = `${window.location.origin}${location.pathname}`;
     const guestUrl = `${url}#/${id}`;
@@ -322,6 +335,29 @@ function Dashboard() {
     if (val == sortType) setSortDirection((prev) => (prev == 'asc' ? 'desc' : 'asc'));
   };
 
+  const handleSelectCheckboxClicked = () => {
+    if (selectedGuests.size > 0) {
+      setSelectedGuests(new Set());
+      setAllSelected(false);
+    } else {
+      const allGuests = new Set(guests.map(([id]) => id));
+      setSelectedGuests(allGuests);
+      setAllSelected(true);
+    }
+  };
+
+  const handleGuestCheckboxClicked = (id: string) => () => {
+    const nextSelectedGuests = new Set(selectedGuests);
+
+    if (nextSelectedGuests.has(id)) nextSelectedGuests.delete(id);
+    else nextSelectedGuests.add(id);
+
+    if (nextSelectedGuests.size == guests.length) setAllSelected(true);
+    else setAllSelected(false);
+
+    setSelectedGuests(nextSelectedGuests);
+  };
+
   return (
     <>
       {overlay && <Overlay />}
@@ -330,15 +366,43 @@ function Dashboard() {
           <div className="border-divider min-w-200 grow border-x pt-12">
             <div className="flex items-end justify-between px-8">
               <h1 className="text-3xl font-medium text-black">Guest List</h1>
-              <input
-                onClick={handleAddGuestClicked}
-                type="button"
-                value="Add Guest"
-                className="font-poppins border-divider cursor-pointer rounded-full border px-4 py-1"
-              />
+              <div className="flex gap-4">
+                {!isSelecting ? (
+                  <>
+                    <input
+                      onClick={handleSelectClicked}
+                      type="button"
+                      value="Select"
+                      className="font-poppins border-divider cursor-pointer rounded-full border px-4 py-1"
+                    />
+                    <input
+                      onClick={handleAddGuestClicked}
+                      type="button"
+                      value="Add Guest"
+                      className="font-poppins border-divider cursor-pointer rounded-full border px-4 py-1"
+                    />
+                  </>
+                ) : (
+                  <>
+                    <input
+                      onClick={handleSelectClicked}
+                      type="button"
+                      value="Cancel"
+                      className="font-poppins border-divider cursor-pointer rounded-full border px-4 py-1"
+                    />
+                  </>
+                )}
+              </div>
             </div>
             <div className="mx-4 mt-8 overflow-clip rounded-xl border border-slate-200 bg-white text-sm">
-              <div className="font- poppins grid w-full grid-cols-(--dashboard-cols) gap-x-2 bg-slate-100 px-3 py-2">
+              <div
+                className={`${isSelecting && 'selecting'} font- poppins grid w-full grid-cols-(--dashboard-cols) gap-x-2 bg-slate-100 px-3 py-2 [.selecting]:grid-cols-(--dashboard-cols-select)`}
+              >
+                {isSelecting && (
+                  <div>
+                    <input type="checkbox" onChange={handleSelectCheckboxClicked} checked={allSelected} />
+                  </div>
+                )}
                 <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('nickname')}>
                   Nickname <SortArrow {...{ sortDirection, active: sortType == 'nickname' }} />
                 </h3>
@@ -358,7 +422,15 @@ function Dashboard() {
                   const guestLength = Object.keys(guests).length;
 
                   return (
-                    <div key={id + i} className="group border-divider/50 grid grid-cols-(--dashboard-cols) gap-x-2 border-b px-3 py-2">
+                    <div
+                      key={id + i}
+                      className={`${isSelecting && 'select'} group border-divider/50 grid grid-cols-(--dashboard-cols) gap-x-2 border-b px-3 py-2 [.select]:grid-cols-(--dashboard-cols-select)`}
+                    >
+                      {isSelecting && (
+                        <div className="py-2">
+                          <input type="checkbox" onChange={handleGuestCheckboxClicked(id)} checked={selectedGuests.has(id)} />
+                        </div>
+                      )}
                       <p className="py-2 font-medium">{guest.nickname}</p>
                       <p className="py-2">{guest?.repliedAt ? format(new Date(guest.repliedAt), 'Pp') : ''}</p>
                       <div className="col-span-2 flex flex-col">
