@@ -9,8 +9,8 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return request.auth != null;
-      // return request.auth != null && request.auth.token.admin == true;
+      // return request.auth != null;
+      return request.auth != null && request.auth.token.admin == true;
     }
   }
 }
