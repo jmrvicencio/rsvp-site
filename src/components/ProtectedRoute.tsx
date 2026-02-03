@@ -20,20 +20,20 @@ function ProtectedRoute({ children }: { children?: ReactNode }) {
   }, []);
 
   // Check if user is admin
-  // useEffect(() => {
-  //   if (!user) {
-  //     if (!loading) navigate('/');
-  //     return;
-  //   }
+  useEffect(() => {
+    if (!user) {
+      if (!loading) navigate('/');
+      return;
+    }
 
-  //   user.getIdTokenResult().then((result) => {
-  //     if (!('admin' in result.claims && result.claims.admin == true)) {
-  //       setUser(null);
-  //       signOut(auth);
-  //       navigate('/');
-  //     }
-  //   });
-  // }, [loading, user]);
+    user.getIdTokenResult().then((result) => {
+      if (!('admin' in result.claims && result.claims.admin == true)) {
+        setUser(null);
+        signOut(auth);
+        navigate('/');
+      }
+    });
+  }, [loading, user]);
 
   return loading ? <>Loading</> : children;
 }
