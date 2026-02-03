@@ -11,9 +11,10 @@ import monogram from '/images/monogram.svg';
 import { auth } from '@/lib/firebase/auth';
 import { useAtom } from 'jotai';
 import { useGuests } from '@/features/dashboard/hooks/useGuests';
-import { Link as LinkIcon, ChevronsUpDown, ArrowDown, ArrowUp } from 'lucide-react';
+import { Link as LinkIcon, ChevronsUpDown, ArrowDown, ArrowUp, LoaderCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { AnimatePresence, motion } from 'motion/react';
+import { useDeleteGuests } from '@/features/guests/hooks/useDeleteGuests';
 
 function AddGuestOverlay() {
   // Refs
@@ -199,7 +200,7 @@ function AddGuestOverlay() {
   );
 }
 
-function Overlay() {
+function GuestOverlay() {
   const [_, setOverlay] = useAtom(showOverlayAtom);
 
   const handleOverlayClicked = () => {
@@ -231,6 +232,7 @@ function Dashboard() {
   const nav = useNavigate();
 
   // Guests
+  const deleteGuests = useDeleteGuests();
   const { guests: guestsQuery } = useGuests();
   const [guests, setGuests] = useState<[string, Guest][]>([...guestsQuery]);
   const [allSelected, setAllSelected] = useState(false);
@@ -240,6 +242,7 @@ function Dashboard() {
   const [overlay, setOverlay] = useAtom(showOverlayAtom);
 
   // Table
+  const [loading, setLoading] = useState(false);
   const [sortType, setSortType] = useState<SortType>('nickname');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
   const [isSelecting, setIsSelecting] = useState(false);
@@ -319,6 +322,8 @@ function Dashboard() {
 
   const handleSelectClicked = () => {
     setIsSelecting((prev) => !prev);
+    setAllSelected(false);
+    setSelectedGuests(new Set());
   };
 
   const handleGuestClicked = (id: string) => async () => {
@@ -336,7 +341,7 @@ function Dashboard() {
   };
 
   const handleSelectCheckboxClicked = () => {
-    if (selectedGuests.size > 0) {
+    if (selectedGuests.size == guests.length) {
       setSelectedGuests(new Set());
       setAllSelected(false);
     } else {
@@ -358,9 +363,19 @@ function Dashboard() {
     setSelectedGuests(nextSelectedGuests);
   };
 
+  const handleDeleteClicked = async () => {
+    const response = await confirm(`Are you sure you want to delete ${selectedGuests.size} item(s)?`);
+
+    if (!response) return;
+
+    setLoading(true);
+    await deleteGuests(selectedGuests);
+    setLoading(false);
+  };
+
   return (
     <>
-      {overlay && <Overlay />}
+      {overlay && <GuestOverlay />}
       <div className="font-poppins text-items min-h-dvh w-full bg-white">
         <div className="mx-auto flex min-h-dvh max-w-280 min-w-full items-stretch sm:min-w-0">
           <div className="border-divider min-w-200 grow border-x pt-12">
@@ -385,6 +400,12 @@ function Dashboard() {
                 ) : (
                   <>
                     <input
+                      onClick={handleDeleteClicked}
+                      type="button"
+                      value={`Delete ${selectedGuests.size} ${selectedGuests.size == 1 ? 'entry' : 'entries'}`}
+                      className="font-poppins border-divider cursor-pointer rounded-full border px-4 py-1"
+                    />
+                    <input
                       onClick={handleSelectClicked}
                       type="button"
                       value="Cancel"
@@ -394,71 +415,77 @@ function Dashboard() {
                 )}
               </div>
             </div>
-            <div className="mx-4 mt-8 overflow-clip rounded-xl border border-slate-200 bg-white text-sm">
-              <div
-                className={`${isSelecting && 'selecting'} font- poppins grid w-full grid-cols-(--dashboard-cols) gap-x-2 bg-slate-100 px-3 py-2 [.selecting]:grid-cols-(--dashboard-cols-select)`}
-              >
-                {isSelecting && (
-                  <div>
-                    <input type="checkbox" onChange={handleSelectCheckboxClicked} checked={allSelected} />
-                  </div>
-                )}
-                <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('nickname')}>
-                  Nickname <SortArrow {...{ sortDirection, active: sortType == 'nickname' }} />
-                </h3>
-                <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('repliedAt')}>
-                  Replied At <SortArrow {...{ sortDirection, active: sortType == 'repliedAt' }} />
-                </h3>
-                <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('name')}>
-                  Guest Names <SortArrow {...{ sortDirection, active: sortType == 'name' }} />
-                </h3>
-                <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('reply')}>
-                  Reply <SortArrow {...{ sortDirection, active: sortType == 'reply' }} />
-                </h3>
-                <h3 className="text-center">Link</h3>
+            {loading ? (
+              <div>
+                <LoaderCircle className="animate-spin" />
               </div>
-              <div className="font-poppins flex w-full flex-col font-light">
-                {guests.map(([id, guest], i) => {
-                  const guestLength = Object.keys(guests).length;
-
-                  return (
-                    <div
-                      key={id + i}
-                      className={`${isSelecting && 'select'} group border-divider/50 grid grid-cols-(--dashboard-cols) gap-x-2 border-b px-3 py-2 [.select]:grid-cols-(--dashboard-cols-select)`}
-                    >
-                      {isSelecting && (
-                        <div className="py-2">
-                          <input type="checkbox" onChange={handleGuestCheckboxClicked(id)} checked={selectedGuests.has(id)} />
-                        </div>
-                      )}
-                      <p className="py-2 font-medium">{guest.nickname}</p>
-                      <p className="py-2">{guest?.repliedAt ? format(new Date(guest.repliedAt), 'Pp') : ''}</p>
-                      <div className="col-span-2 flex flex-col">
-                        {Object.entries(guest.invitees).map(([name, reply], i) => (
-                          <div
-                            key={name + i}
-                            className="border-divider/50 grid grid-cols-[2fr_1fr] items-center not-first:mt-2 not-first:border-t not-first:pt-2"
-                          >
-                            <p className="py-2">{name}</p>
-                            <div
-                              className={`${reply == undefined && 'pending'} divider flex w-fit items-center gap-1 rounded-sm border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-900 [.pending]:text-slate-500`}
-                            >
-                              <div
-                                className={`${reply == undefined ? '' : reply == true ? 'accept' : 'decline'} aspect-square h-2 w-2 rounded-full bg-slate-300 [.accept]:bg-green-500 [.decline]:bg-red-500`}
-                              />
-                              {reply == undefined ? 'PENDING' : reply == true ? 'ACCEPT' : 'DECLINE'}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="flex cursor-pointer items-center justify-center" onClick={handleGuestClicked(id)}>
-                        <LinkIcon className="aspect-square h-4 w-4 stroke-slate-500 stroke-2" />
-                      </div>
+            ) : (
+              <div className="mx-4 mt-8 overflow-clip rounded-xl border border-slate-200 bg-white text-sm">
+                <div
+                  className={`${isSelecting && 'selecting'} font- poppins grid w-full grid-cols-(--dashboard-cols) gap-x-2 bg-slate-100 px-3 py-2 [.selecting]:grid-cols-(--dashboard-cols-select)`}
+                >
+                  {isSelecting && (
+                    <div>
+                      <input type="checkbox" onChange={handleSelectCheckboxClicked} checked={allSelected} />
                     </div>
-                  );
-                })}
+                  )}
+                  <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('nickname')}>
+                    Nickname <SortArrow {...{ sortDirection, active: sortType == 'nickname' }} />
+                  </h3>
+                  <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('repliedAt')}>
+                    Replied At <SortArrow {...{ sortDirection, active: sortType == 'repliedAt' }} />
+                  </h3>
+                  <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('name')}>
+                    Guest Names <SortArrow {...{ sortDirection, active: sortType == 'name' }} />
+                  </h3>
+                  <h3 className="flex cursor-pointer items-center gap-2 select-none" onClick={handleHeadingClicked('reply')}>
+                    Reply <SortArrow {...{ sortDirection, active: sortType == 'reply' }} />
+                  </h3>
+                  <h3 className="text-center">Link</h3>
+                </div>
+                <div className="font-poppins flex w-full flex-col font-light">
+                  {guests.map(([id, guest], i) => {
+                    const guestLength = Object.keys(guests).length;
+
+                    return (
+                      <div
+                        key={id + i}
+                        className={`${isSelecting && 'select'} group border-divider/50 grid grid-cols-(--dashboard-cols) gap-x-2 border-b px-3 py-2 [.select]:grid-cols-(--dashboard-cols-select)`}
+                      >
+                        {isSelecting && (
+                          <div className="py-2">
+                            <input type="checkbox" onChange={handleGuestCheckboxClicked(id)} checked={selectedGuests.has(id)} />
+                          </div>
+                        )}
+                        <p className="py-2 font-medium">{guest.nickname}</p>
+                        <p className="py-2">{guest?.repliedAt ? format(new Date(guest.repliedAt), 'Pp') : ''}</p>
+                        <div className="col-span-2 flex flex-col">
+                          {Object.entries(guest.invitees).map(([name, reply], i) => (
+                            <div
+                              key={name + i}
+                              className="border-divider/50 grid grid-cols-[2fr_1fr] items-center not-first:mt-2 not-first:border-t not-first:pt-2"
+                            >
+                              <p className="py-2">{name}</p>
+                              <div
+                                className={`${reply == undefined && 'pending'} divider flex w-fit items-center gap-1 rounded-sm border border-slate-200 bg-slate-50 px-2 py-0.5 text-xs font-medium text-slate-900 [.pending]:text-slate-500`}
+                              >
+                                <div
+                                  className={`${reply == undefined ? '' : reply == true ? 'accept' : 'decline'} aspect-square h-2 w-2 rounded-full bg-slate-300 [.accept]:bg-green-500 [.decline]:bg-red-500`}
+                                />
+                                {reply == undefined ? 'PENDING' : reply == true ? 'ACCEPT' : 'DECLINE'}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="flex cursor-pointer items-center justify-center" onClick={handleGuestClicked(id)}>
+                          <LinkIcon className="aspect-square h-4 w-4 stroke-slate-500 stroke-2" />
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            )}
           </div>
           <aside className="mt-24 flex w-60 flex-col items-center px-6">
             <Link to="/" className="cursor-pointer">
