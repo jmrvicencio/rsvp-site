@@ -46,7 +46,9 @@ function RSVP({ ref }: { ref: RefObject<HTMLDivElement | null> }) {
   };
 
   const handleSubmitClicked = async () => {
-    const valid = !Object.values(replies).some((val) => typeof val != 'boolean');
+    const repliesValid = !Object.values(replies).some((val) => typeof val != 'boolean');
+    const idValid = guestId != null && guestId != undefined && guestId != '';
+    const valid = repliesValid && idValid;
 
     if (!valid) {
       toast.error('Please make sure all RSVPs are filled');

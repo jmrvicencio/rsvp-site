@@ -1,5 +1,6 @@
 import { ChangeEvent, MouseEvent, useState, useRef, useEffect } from 'react';
 import { Link, Meta, useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
 import _ from 'lodash';
 
 import { showOverlayAtom } from '@/features/dashboard/store/store';
@@ -355,10 +356,11 @@ function Dashboard() {
               <div className="font-poppins flex w-full flex-col font-light">
                 {guests.map(([id, guest], i) => {
                   const guestLength = Object.keys(guests).length;
+
                   return (
                     <div key={id + i} className="group border-divider/50 grid grid-cols-(--dashboard-cols) gap-x-2 border-b px-3 py-2">
                       <p className="py-2 font-medium">{guest.nickname}</p>
-                      <p>{guest.repliedAt ?? ''}</p>
+                      <p className="py-2">{guest?.repliedAt ? format(new Date(guest.repliedAt), 'Pp') : ''}</p>
                       <div className="col-span-2 flex flex-col">
                         {Object.entries(guest.invitees).map(([name, reply], i) => (
                           <div
