@@ -3,7 +3,7 @@ import { Link, Meta, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import _, { set } from 'lodash';
 
-import { showOverlayAtom } from '@/features/dashboard/store/store';
+import { editGuestAtom, showOverlayAtom } from '@/features/dashboard/store/store';
 import { useAddGuest } from '@/features/dashboard/hooks/useAddGuest';
 import { Guest, GuestRSVP, SortType } from '@/features/dashboard/types';
 
@@ -16,18 +16,24 @@ import toast from 'react-hot-toast';
 import { AnimatePresence, motion } from 'motion/react';
 import { useDeleteGuests } from '@/features/guests/hooks/useDeleteGuests';
 
-function AddGuestOverlay() {
+function AddGuestOverlay({ editGuest: guestData }: { editGuest?: [string, Guest] }) {
   // Refs
   const nameInputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
+  // Edit Check
+  const isEditing = guestData != undefined;
+  const guest = isEditing ? guestData[1] : undefined;
+  const guestId = isEditing ? guestData[0] : undefined;
+  const originalGuestNames = isEditing ? Object.keys(guest!.invitees) : undefined;
+
   // hooks
-  const { addGuest, submitting } = useAddGuest();
+  const { addGuest, editGuest, submitting } = useAddGuest();
 
   // local states
   const [_, setOverlay] = useAtom(showOverlayAtom);
   const [newGuest, setNewGuest] = useState<boolean>(false);
-  const [nickname, setNickname] = useState<string>('');
-  const [guestNames, setGuestNames] = useState<string[]>(['']);
+  const [nickname, setNickname] = useState<string>(isEditing ? guest!.nickname : '');
+  const [guestNames, setGuestNames] = useState<string[]>(isEditing ? [...originalGuestNames!] : ['']);
   const [error, setError] = useState<Set<number>>(new Set());
 
   // ---------------------------
@@ -115,20 +121,38 @@ function AddGuestOverlay() {
     // Submit Guests
     if (!submitting) {
       const nextNickname = nickname == '' ? guestNames[0] : nickname;
-      await addGuest({
-        nickname: nextNickname,
-        invitees: guestNames.reduce((acc: GuestRSVP, name) => {
-          acc[name] = null;
-          return acc;
-        }, {}),
-      });
+
+      if (isEditing) {
+        const nextGuestData: Guest = {
+          nickname: nextNickname,
+          invitees: guestNames.reduce((acc: GuestRSVP, name, i) => {
+            const originalKey = originalGuestNames![i] ?? '';
+            const originalResponse = guest!.invitees[originalKey] ?? null;
+
+            acc[name] = originalResponse;
+            console.log(acc);
+            return acc;
+          }, {}),
+        };
+        if (guest?.repliedAt) nextGuestData.repliedAt = guest.repliedAt;
+
+        await editGuest(guestId!, nextGuestData);
+      } else {
+        await addGuest({
+          nickname: nextNickname,
+          invitees: guestNames.reduce((acc: GuestRSVP, name) => {
+            acc[name] = null;
+            return acc;
+          }, {}),
+        });
+      }
       setOverlay(false);
     }
   };
 
   return (
     <div onClick={handleOverlayClicked} className="text-items flex w-100 flex-col gap-8 rounded-xl bg-gray-100 p-6">
-      <h2 className="text-xl font-bold">Add Guest</h2>
+      <h2 className="text-xl font-bold">{isEditing ? 'Edit Guest(s)' : 'Add Guest(s)'}</h2>
       <div className="flex flex-col">
         <div className="border-divider mb-8 flex w-full flex-col gap-1 border-b pb-8">
           <label htmlFor="nickname" className="ml-1 text-sm">
@@ -192,7 +216,7 @@ function AddGuestOverlay() {
       </div>
       <input
         type="button"
-        value="Add"
+        value={`${isEditing ? 'Confirm' : 'Add'}`}
         className="cursor-pointer self-end rounded-full bg-black px-8 py-1 text-white"
         onClick={handleDoneClicked}
       />
@@ -202,15 +226,17 @@ function AddGuestOverlay() {
 
 function GuestOverlay() {
   const [_, setOverlay] = useAtom(showOverlayAtom);
+  const [editGuest, setEditGuest] = useAtom(editGuestAtom);
 
   const handleOverlayClicked = () => {
     console.log('closing overlay');
     setOverlay(false);
+    setEditGuest(undefined);
   };
 
   return (
     <div className="absolute inset-0 z-1 flex items-center justify-center bg-black/40" onClick={handleOverlayClicked}>
-      <AddGuestOverlay />
+      <AddGuestOverlay editGuest={editGuest} />
     </div>
   );
 }
@@ -240,6 +266,7 @@ function Dashboard() {
 
   // Overlay
   const [overlay, setOverlay] = useAtom(showOverlayAtom);
+  const [editGuest, setEditGuest] = useAtom(editGuestAtom);
 
   // Table
   const [loading, setLoading] = useState(false);
@@ -318,6 +345,11 @@ function Dashboard() {
 
   const handleAddGuestClicked = () => {
     setOverlay(true);
+  };
+
+  const handleEditGuestClicked = (id: string, guest: Guest) => () => {
+    setOverlay(true);
+    setEditGuest([id, guest]);
   };
 
   const handleSelectClicked = () => {
@@ -460,7 +492,9 @@ function Dashboard() {
                             <input type="checkbox" onChange={handleGuestCheckboxClicked(id)} checked={selectedGuests.has(id)} />
                           </div>
                         )}
-                        <p className="py-2 font-medium">{guest.nickname}</p>
+                        <p className="cursor-pointer py-2 font-medium" onClick={handleEditGuestClicked(id, guest)}>
+                          {guest.nickname}
+                        </p>
                         <p className="py-2">{guest?.repliedAt ? format(new Date(guest.repliedAt), 'Pp') : ''}</p>
                         <div className="col-span-2 flex flex-col">
                           {Object.entries(guest.invitees).map(([name, reply], i) => (

@@ -87,7 +87,7 @@ function RSVP({ ref }: { ref: RefObject<HTMLDivElement | null> }) {
                   <p className="font-bold">M</p>
                   <p className="font-alex-brush grow text-center text-3xl sm:text-4xl">{name}</p>
                 </div>
-                <div className="mt-4 flex flex-col items-center justify-center gap-2 sm:flex-row sm:gap-8">
+                <div className="mt-4 flex flex-col items-center justify-center gap-2 px-8 sm:flex-row sm:gap-8">
                   <label htmlFor={`rsvp-${i}-y`} className="flex w-4/5 cursor-pointer items-center gap-2 sm:w-full">
                     <input
                       id={`rsvp-${i}-y`}
