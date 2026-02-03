@@ -1,7 +1,7 @@
 import { ChangeEvent, MouseEvent, useState, useRef, useEffect } from 'react';
 import { Link, Meta, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
-import _ from 'lodash';
+import _, { set } from 'lodash';
 
 import { showOverlayAtom } from '@/features/dashboard/store/store';
 import { useAddGuest } from '@/features/dashboard/hooks/useAddGuest';
@@ -369,7 +369,10 @@ function Dashboard() {
     if (!response) return;
 
     setLoading(true);
+    setAllSelected(false);
+    setIsSelecting(false);
     await deleteGuests(selectedGuests);
+
     setLoading(false);
   };
 
