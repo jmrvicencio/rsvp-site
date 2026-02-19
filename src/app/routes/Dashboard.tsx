@@ -7,7 +7,7 @@ import { editGuestAtom, showOverlayAtom } from '@/features/dashboard/store/store
 import { useAddGuest } from '@/features/dashboard/hooks/useAddGuest';
 import { Guest, GuestRSVP, SortType } from '@/features/dashboard/types';
 
-import monogram from '/images/monogram.svg';
+import monogram from '/images/monogram.png';
 import { auth } from '@/lib/firebase/auth';
 import { useAtom } from 'jotai';
 import { useGuests } from '@/features/dashboard/hooks/useGuests';
@@ -235,7 +235,7 @@ function GuestOverlay() {
   };
 
   return (
-    <div className="absolute inset-0 z-1 flex items-center justify-center bg-black/40" onClick={handleOverlayClicked}>
+    <div className="fixed inset-0 z-1 flex items-center justify-center bg-black/40" onClick={handleOverlayClicked}>
       <AddGuestOverlay editGuest={editGuest} />
     </div>
   );
