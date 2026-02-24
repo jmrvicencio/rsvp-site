@@ -1,5 +1,7 @@
 # 💍 Wedding Invitation & RSVP Website
 
+![Preview Image](public/readme/sample.png)
+
 A newspaper-themed digital wedding invite & RSVP website designed to provide
 guests with event details and a seamless way to respond online.
 
@@ -14,6 +16,11 @@ submit their RSVP directly through the site.
 
 The goal of this project was to create a unique and very personal invite
 experience.
+
+![Preview Image](public/readme/dashboard.png)
+
+Admin Dashboard allows the users to customize their wedding invites and
+monitor their responses.
 
 ## 🛠 Tech Stack
 
@@ -32,8 +39,6 @@ experience.
 - 📝 RSVP form with guest response handling
 - 📱 Fully responsive design (mobile-first)
 - ✨ Smooth, tasteful animations
-
-## 📸 Preview
 
 ## 📄 License
 
