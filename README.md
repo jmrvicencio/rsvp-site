@@ -1,16 +1,40 @@
-# React + Vite
+# 💍 Wedding Invitation & RSVP Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A newspaper-themed digital wedding invite & RSVP website designed to provide
+guests with event details and a seamless way to respond online.
 
-Currently, two official plugins are available:
+Includes an admin dashboard to handle guest management and check guest
+responses in real-time!
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## ✨ Overview
 
-## React Compiler
+This project is a fully responsive wedding website that serves as both a
+digital invitatoin and RSVP platform. Guests can view event details and
+submit their RSVP directly through the site.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+The goal of this project was to create a unique and very personal invite
+experience.
 
-## Expanding the ESLint configuration
+## 🛠 Tech Stack
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+- React
+- TypeScript
+- Firebase
+- Firestore
+- Framer Motion
+- Tailwind CSS
+
+## 🎨 Features
+
+- 💌 Elegant digital invitation layout
+- 🗓 Event schedule & venue details
+- 📍 Location information
+- 📝 RSVP form with guest response handling
+- 📱 Fully responsive design (mobile-first)
+- ✨ Smooth, tasteful animations
+
+## 📸 Preview
+
+## 📄 License
+
+This project is for personal use.
