@@ -12,10 +12,10 @@ import RSVP from './routes/Invite/RSVP';
 import WeddingParty from './routes/Invite/WeddingParty';
 
 import { Quote, Menu } from 'lucide-react';
-import coupleImg from '/images/couple.png';
-import donBoscoImg from '/images/don_bosco.png';
-import arugaImg from '/images/aruga.png';
-import storyOfUsImg from '/images/story-of-us.png';
+import coupleImg from '/portfolio/banner.jpg';
+import ceremonyImg from '/portfolio/ceremony.jpg';
+import receptionImg from '/portfolio/reception.jpg';
+import storyOfUsImg from '/portfolio/journey.jpg';
 import brownImg from '/images/brown.png';
 import greenImg from '/images/green.png';
 import mushroomImg from '/images/mushroom.png';
@@ -58,7 +58,7 @@ function Countdown({ isSm }: { isSm: boolean }) {
   const [hour, setHour] = useState(0);
   const [minute, setMinute] = useState(0);
   const [second, setSecond] = useState(0);
-  const [endDate] = useState(new Date(2026, 7, 29, 14));
+  const [endDate] = useState(new Date(2030, 1, 1, 12));
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -255,7 +255,7 @@ function App() {
         )}
       </AnimatePresence>
       <header className="border-divider flex w-full flex-col items-stretch border-b pt-3 pb-0 sm:border-black sm:pt-10 sm:pb-0 after:sm:mt-2 after:sm:mb-1 after:sm:w-full after:sm:border-b">
-        <h3 className="font-poppins mb-4 text-center text-black/60 uppercase not-sm:hidden">John Vicencio - Jaynifer Sagana</h3>
+        <h3 className="font-poppins mb-4 text-center text-black/60 uppercase not-sm:hidden">John Doe - Jane Doe</h3>
         <div className="relative">
           <div className="@container relative flex w-full items-center select-none lg:absolute">
             <div className="mx-auto w-fit">
@@ -273,11 +273,11 @@ function App() {
           <div>
             <div className="font-poppins bg-divider/10 text-items border-divider mt-3 flex w-full justify-between border-t px-4 py-3 text-xs font-light sm:hidden sm:text-base lg:mt-0 lg:flex lg:border-t-0 lg:bg-transparent lg:px-0 lg:pt-1 lg:pb-0">
               <div className="flex flex-col gap-1">
-                <p>Saturday, August 29, 2026</p>
+                <p>Saturday, January 1, 20xx</p>
                 <p className="not-lg:hidden">RSVP Now</p>
               </div>
               <div>
-                <p>Don Bosco Parish, Makati</p>
+                <p>Colletorto Parish Chapel, Italy</p>
               </div>
             </div>
             <div className="font-poppins mt-6 flex w-full justify-center gap-12 text-lg font-light not-sm:hidden">
@@ -302,7 +302,7 @@ function App() {
       </header>
       <main className="@container px-4 sm:px-0">
         <h1 className="font-playfair-display my-8 text-center text-[clamp(1rem,10cqw,200rem)] font-bold sm:text-[clamp(1rem,6cqw,200rem)]">
-          John & Jayni <br className="sm:hidden" /> Getting Married!
+          John & Jane <br className="sm:hidden" /> Getting Married!
         </h1>
         <section className="border-divider flex flex-col border-y py-8 md:grid md:grid-cols-17">
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
@@ -313,7 +313,7 @@ function App() {
                 </h3>
                 <p>
                   Dear <span className="relative bg-yellow-200 font-bold text-black">{guests.nickname}</span>, the couple would love it if
-                  you could make it to their wedding on <span className="font-bold text-black">August 29, 2026</span>
+                  you could make it to their wedding on <span className="font-bold text-black">January 1, 20xx</span>
                 </p>
                 <div className="border-divider my-5 border-l pl-4">
                   <Quote className="w-4 stroke-black/40" />
@@ -331,28 +331,28 @@ function App() {
           >
             <div className="tg grid grid-cols-[2fr_3fr] gap-4 md:block">
               {isMd ? (
-                <div className="aspect-3/2 bg-cover bg-center" style={{ backgroundImage: `url('${donBoscoImg}')` }} />
+                <div className="aspect-3/2 bg-cover bg-center" style={{ backgroundImage: `url('${ceremonyImg}')` }} />
               ) : (
-                <img src={donBoscoImg} />
+                <img src={ceremonyImg} />
               )}
               <div>
                 <h3 className="font-libre-baskerville mb-1 text-2xl font-semibold text-black capitalize md:mt-5">Ceremony Venue</h3>
-                <p>Don Bosco Chapel Makati</p>
-                <a href="https://maps.app.goo.gl/6waU4P1bzqK6kfMy5">
+                <p>Colletorto Parish Chapel, Italy</p>
+                <a href="#">
                   <p className="text-sm text-blue-900 underline">Google Maps Link</p>
                 </a>
               </div>
             </div>
             <div className="tg mt-8 grid grid-cols-[2fr_3fr] gap-4 md:block">
               {isSm ? (
-                <div className="aspect-3/2 bg-cover bg-center" style={{ backgroundImage: `url('${arugaImg}')` }} />
+                <div className="aspect-3/2 bg-cover bg-center" style={{ backgroundImage: `url('${receptionImg}')` }} />
               ) : (
-                <img src={arugaImg} />
+                <img src={receptionImg} />
               )}
               <div>
                 <h3 className="font-libre-baskerville mb-1 text-2xl font-semibold text-black capitalize md:mt-5">Ceremony Venue</h3>
-                <p>Aruga Apartments by Rockwell</p>
-                <a href="https://maps.app.goo.gl/cvjaYGtsLuF3TuXp6">
+                <p>Langerwehe Hotel, Germany</p>
+                <a href="#">
                   <p className="text-sm text-blue-900 underline">Google Maps Link</p>
                 </a>
               </div>
@@ -428,20 +428,22 @@ function App() {
                 </h3>
                 <div className="flex flex-col gap-4">
                   <p>
-                    It began with curiosity. While talking with his friend, John heard a name he never heard before: “Jaynifer”. That
-                    curiosity grew into a connection.
+                    This is placeholder text meant to demonstrate how a “Story of Us” section could look on a wedding invite–style portfolio
+                    project. Imagine this as a sample narrative where two people meet by chance, discover shared interests, and begin
+                    building a life together. The tone is intentionally heartfelt and personal, designed to show how copy can capture
+                    emotion in a way that fits a themed design.
                   </p>
                   <p>
-                    A movie date watching “The Good Dinosaur” marked the start of their relationship (A good date, a bad movie..) They grew
-                    through school and chose to graduate in the same year. They had their share of challenges and arguments early on, but
-                    over time, they learned and grew together.
+                    As the story unfolds, the placeholder text illustrates how everyday moments—like traveling, laughing together, or
+                    supporting one another—can be written as milestones in a relationship. This isn’t a real couple’s journey, but rather an
+                    example of how you might structure content to feel authentic and engaging. It demonstrates pacing, flow, and the kind of
+                    language that works well for a wedding invite site.
                   </p>
                   <p>
-                    One day, a little curious and teasing, Jayni asked John when he was going to 'pop the question'. John was planning to do
-                    it on their first trip abroad, but with no tickets yet booked, he panicked and said "Before 30", accidentally not
-                    specifying if he meant his 30th or her 30th. That ambiguity was answered on May 4, 2025, 1 day before John turned 30
-                    when he finally propsed to Jayni in Singapore. And now after ten years, they continue life side by side. From everyday
-                    moments to adventures near and far, they keep choosing each other with laughter, creativity, and trust.
+                    Finally, the placeholder text concludes with a forward-looking sentiment: a symbolic “next chapter” that represents
+                    commitment and celebration. Again, this is not an actual announcement, but a sample ending crafted to show how a
+                    portfolio project could present a wedding invite narrative. It’s here to help visualize design, typography, and layout
+                    choices without needing real personal details.
                   </p>
                 </div>
               </div>
@@ -455,10 +457,7 @@ function App() {
                 Your presence at our celebration is the greatest gift we could ask for. Should you wish to honor us further, a monetary gift
                 would be warmly appreciated, though never expected.
               </p>
-              <div className="mt-4 flex flex-col items-center gap-2">
-                <h4 className="text-center text-3xl font-bold">BPI</h4>
-                <img className="w-4/5" src={honeymoonFund} />
-              </div>
+              <div className="mt-4 flex flex-col items-center gap-2"></div>
             </div>
             <div className="border-divider mb-10 border-t pt-10">
               <img src={luunaMilo} className="w-full" />

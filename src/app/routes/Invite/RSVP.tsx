@@ -5,8 +5,6 @@ import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import { useAtom } from 'jotai';
 import { Guest, GuestRSVP } from '@/features/dashboard/types';
-import { useUpdateGuest } from '@/features/guests/hooks/useSetGuest';
-import { guestAtom } from '@/store/store';
 import toast from 'react-hot-toast';
 
 import { CircleAlert, LoaderCircle } from 'lucide-react';
@@ -16,12 +14,17 @@ import rsvpRImg from '/images/RSVP-R.png';
 function RSVP({ ref }: { ref: RefObject<HTMLDivElement | null> }) {
   // hooks
   const { id: guestId } = useParams();
-  const { updateGuest, submitting } = useUpdateGuest(guestId!);
 
   // local states
-  const [guests, setGuests] = useAtom(guestAtom);
   const [replies, setReply] = useState<GuestRSVP>({});
   const [error, setError] = useState(false);
+  const [guests, setGuests] = useState<Guest>({
+    nickname: 'Sample Guest Family',
+    invitees: {
+      'Richard Owens': null,
+      'Janine Owens': null,
+    },
+  });
 
   // computed states
   const hasSubmitted = guests.repliedAt != undefined;
@@ -47,8 +50,7 @@ function RSVP({ ref }: { ref: RefObject<HTMLDivElement | null> }) {
 
   const handleSubmitClicked = async () => {
     const repliesValid = !Object.values(replies).some((val) => typeof val != 'boolean');
-    const idValid = guestId != null && guestId != undefined && guestId != '';
-    const valid = repliesValid && idValid;
+    const valid = repliesValid;
 
     if (!valid) {
       toast.error('Please make sure all RSVPs are filled');
@@ -58,7 +60,7 @@ function RSVP({ ref }: { ref: RefObject<HTMLDivElement | null> }) {
     }
 
     const nextGuests: Guest = { ...guests, invitees: replies, repliedAt: new Date().getTime() };
-    await updateGuest(nextGuests);
+    toast.success('RSVP response has been sent!');
     setError(false);
     setGuests(nextGuests);
   };
@@ -78,7 +80,7 @@ function RSVP({ ref }: { ref: RefObject<HTMLDivElement | null> }) {
         }}
       >
         <h3 className="font-libre-baskerville mb-5 text-7xl font-semibold capitalize">RSVP</h3>
-        <h4 className="font-playfair -mt-6 mb-16">Please kindly reply by July 29</h4>
+        <h4 className="font-playfair -mt-6 mb-16">Please kindly reply by Jan 1</h4>
         <div>
           <form className="flex flex-col items-center">
             {Object.entries(guests.invitees).map(([name, reply], i) => (
@@ -121,12 +123,8 @@ function RSVP({ ref }: { ref: RefObject<HTMLDivElement | null> }) {
                 </div>
               </div>
             ))}
-            <div
-              className={`${submitting && 'submitting'} mt-6 flex h-25 flex-col items-center justify-end gap-2 [.submitting]:justify-center`}
-            >
-              {submitting ? (
-                <LoaderCircle className="animate-spin" />
-              ) : hasSubmitted ? (
+            <div className={`mt-6 flex h-25 flex-col items-center justify-end gap-2 [.submitting]:justify-center`}>
+              {hasSubmitted ? (
                 <>
                   <AnimatePresence>
                     {canResubmit && (

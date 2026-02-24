@@ -19,44 +19,44 @@ function WeddingParty() {
             <h4 className="-mb-4 text-left text-lg font-light uppercase sm:mb-0 sm:text-xl">Ninangs</h4>
 
             <p className="odd:text-right even:text-left">
-              Ricky
-              <br className="block sm:hidden" /> Cano
+              John
+              <br className="block sm:hidden" /> Doe
             </p>
             <p className="odd:text-right even:text-left">
-              Ayeen
-              <br className="block sm:hidden" /> Vicencio
-            </p>
-            <p className="odd:text-right even:text-left">
-              Eduardo
-              <br className="block sm:hidden" /> Alde, Jr
-            </p>
-            <p className="odd:text-right even:text-left">
-              Ma. Cristina
-              <br className="block sm:hidden" /> Aguas
+              Jane
+              <br className="block sm:hidden" /> Deer
             </p>
             <p className="odd:text-right even:text-left">
               John
-              <br className="block sm:hidden" /> Fernandez
+              <br className="block sm:hidden" /> Doe
             </p>
             <p className="odd:text-right even:text-left">
-              Filipina
-              <br className="block sm:hidden" /> Sagana
+              Jane
+              <br className="block sm:hidden" /> Deer
             </p>
             <p className="odd:text-right even:text-left">
-              Alfredo
-              <br className="block sm:hidden" /> Reyes
+              John
+              <br className="block sm:hidden" /> Doe
             </p>
             <p className="odd:text-right even:text-left">
-              Paz <br className="block sm:hidden" />
-              Nama
+              Jane
+              <br className="block sm:hidden" /> Deer
             </p>
             <p className="odd:text-right even:text-left">
-              Abelardo
-              <br className="block sm:hidden" /> Pagsibigay, Jr.
+              John
+              <br className="block sm:hidden" /> Doe
             </p>
             <p className="odd:text-right even:text-left">
-              Carolyn
-              <br className="block sm:hidden" /> Chin
+              Jane
+              <br className="block sm:hidden" /> Deer
+            </p>
+            <p className="odd:text-right even:text-left">
+              John
+              <br className="block sm:hidden" /> Doe
+            </p>
+            <p className="odd:text-right even:text-left">
+              Jane
+              <br className="block sm:hidden" /> Deer
             </p>
           </div>
           <div className="col-span-1 text-right">
@@ -64,14 +64,14 @@ function WeddingParty() {
               Best
               <br className="sm:hidden" /> Woman
             </h4>
-            <p>Patricia Vicencio</p>
+            <p>Jane Deer</p>
           </div>
           <div className="col-span-1 text-left">
             <h4 className="text-lg font-light uppercase sm:text-lg/relaxed">
               Man of
               <br className="sm:hidden" /> Honor
             </h4>
-            <p>Jayms Sagana</p>
+            <p>John Doe</p>
           </div>
         </div>
       </div>
@@ -87,53 +87,53 @@ function WeddingParty() {
         <div className="grid grid-flow-dense grid-cols-2 gap-x-4 gap-y-6 text-lg sm:gap-x-8 sm:text-2xl">
           <div className="col-span-2">
             <h4 className="text-lg font-light uppercase sm:text-xl">Veil</h4>
-            <p>Marlon Demafeliz</p>
-            <p>Barbie Olegario</p>
+            <p>John Doe</p>
+            <p>Jane Deer</p>
           </div>
           <div className="col-span-2">
             <h4 className="text-lg font-light uppercase sm:text-xl">Cord</h4>
-            <p>Erik Ramos</p>
-            <p>Renee Ramos</p>
+            <p>John Doe</p>
+            <p>Jane Deer</p>
           </div>
           <div className="col-span-2">
             <h4 className="text-lg font-light uppercase sm:text-xl">Candle</h4>
-            <p>Julian Nepomuceno</p>
-            <p>Sophia Nuñez</p>
+            <p>John Doe</p>
+            <p>Jane Deer</p>
           </div>
           <div className="col-span-2 grid grid-cols-2 gap-x-4 gap-y-4 leading-tight sm:gap-x-8 sm:gap-y-0">
             <h4 className="-mb-4 text-right text-lg font-light uppercase sm:mb-0 sm:text-xl">Groomsmen</h4>
             <h4 className="-mb-4 text-left text-lg font-light uppercase sm:mb-0 sm:text-xl">Bridesmaids</h4>
             <p className="odd:text-right even:text-left">
-              Marlon
-              <br className="block sm:hidden" /> Demafeliz
+              John
+              <br className="block sm:hidden" /> Doe
             </p>
             <p className="odd:text-right even:text-left">
-              Barbie
-              <br className="block sm:hidden" /> Olegario
+              Jane
+              <br className="block sm:hidden" /> Deer
             </p>
             <p className="odd:text-right even:text-left">
-              Julian
-              <br className="block sm:hidden" /> Nepomuceno
+              John
+              <br className="block sm:hidden" /> Doe
             </p>
             <p className="odd:text-right even:text-left">
-              Sophia
-              <br className="block sm:hidden" /> Nuñez
+              Jane
+              <br className="block sm:hidden" /> Deer
             </p>
             <p className="odd:text-right even:text-left">
-              Nestor
-              <br className="block sm:hidden" /> Joble
+              John
+              <br className="block sm:hidden" /> Doe
             </p>
             <p className="odd:text-right even:text-left">
-              Helen
-              <br className="block sm:hidden" /> Grace Danseco
+              Jane
+              <br className="block sm:hidden" /> Deer
             </p>
             <p className="odd:text-right even:text-left">
-              Erik
-              <br className="block sm:hidden" /> Ramos
+              John
+              <br className="block sm:hidden" /> Doe
             </p>
             <p className="odd:text-right even:text-left">
-              Renee
-              <br className="block sm:hidden" /> Ramos
+              Jane
+              <br className="block sm:hidden" /> Deer
             </p>
           </div>
           <div className="col-span-1 text-center">
@@ -146,11 +146,11 @@ function WeddingParty() {
           </div>
           <div className="col-span-1 text-center">
             <h4 className="text-lg font-light uppercase sm:text-xl">Ring Bearer</h4>
-            <p>Eli Reyes</p>
+            <p>TBA</p>
           </div>
           <div className="col-span-1 text-center">
             <h4 className="text-lg font-light uppercase sm:text-xl">Flower Girls</h4>
-            <p>Bridgette Sagana</p>
+            <p>Jane Deer</p>
           </div>
         </div>
       </div>
