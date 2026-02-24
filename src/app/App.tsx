@@ -479,7 +479,8 @@ function App() {
                 <div className="flex flex-col p-4 text-center">
                   <p>Longest Distance Travelled</p>
                   <p>First to RSVP</p>
-                  <p>Last Guest to Stay</p>
+                  <p>Last Man Standing</p>
+                  <p>Longest Married</p>
                   <p>Most Photos Taken</p>
                 </div>
               </div>
