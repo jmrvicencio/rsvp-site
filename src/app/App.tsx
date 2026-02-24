@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { getDaysInMonth } from 'date-fns';
 import { useAtom } from 'jotai';
-import { useGuest } from '@/features/guests/hooks/useGuest';
 import { guestAtom, showMobileMenuAtom } from '@/store/store';
 import useLockBodyScroll from '@/hooks/useLockBodyScroll';
 import { AnimatePresence, motion } from 'motion/react';
@@ -20,7 +19,6 @@ import brownImg from '/images/brown.png';
 import greenImg from '/images/green.png';
 import mushroomImg from '/images/mushroom.png';
 import attireSamples from '/images/clothes/samples.png';
-import honeymoonFund from '/images/honeymoon-fund.png';
 import luunaMilo from '/images/luuna-milo.png';
 import { useWidthCheck } from '@/hooks/useWidthCheck';
 
@@ -204,7 +202,6 @@ function MobileMenu({
 function App() {
   // hooks
   const { id: guestId } = useParams();
-  const { guest: guestQuery, loading } = useGuest(guestId!);
   const { isSm, isMd } = useWidthCheck();
 
   const rsvpRef = useRef<HTMLDivElement>(null);
@@ -218,12 +215,6 @@ function App() {
   const [showMobileMenu, setShowMobileMenu] = useAtom(showMobileMenuAtom);
 
   useLockBodyScroll(showMobileMenu);
-
-  useEffect(() => {
-    if (guestQuery != undefined) {
-      setGuests(guestQuery);
-    }
-  }, [guestQuery]);
 
   // ----------------
   // Event Listener
