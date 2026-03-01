@@ -403,15 +403,22 @@ function App() {
               <div className="text-items font-poppins w-full shrink grow-2 sm:w-1">
                 <h3 className="font-libre-baskerville text-4xl font-semibold text-black capitalize sm:text-5xl">Attire</h3>
                 <p className="font-libre-baskerville mb-5 text-2xl italic">Clothing Guide</p>
-                <h4 className="mt-6 text-lg font-semibold">Ladies</h4>
+                <h4 className="mt-6 text-2xl font-bold">Principal Sponsors</h4>
+                <h5 className="mt-2 text-lg font-semibold">Ladies:</h5>
                 <p>Knee to Floor length Dress</p>
-                <h4 className="mt-6 text-lg font-semibold">Gentelemen</h4>
-                <p>Barong Tagalog</p>
+                <h5 className="mt-2 text-lg font-semibold">Gentelemen:</h5>
+                <p>Barong Tagalog and Black Pants</p>
+
+                <h4 className="mt-6 border-t border-black/20 pt-6 text-2xl font-bold">Guests</h4>
+                <h5 className="mt-2 text-lg font-semibold">Ladies:</h5>
+                <p>Knee to Floor length Dress</p>
+                <h5 className="mt-2 text-lg font-semibold">Gentelemen:</h5>
+                <p>Longsleeves, Suit or Barong</p>
               </div>
 
               <div className="mt-4 flex w-full grow-3 flex-col justify-stretch sm:mt-0 sm:w-1">
                 <img src={attireSamples} className="w-full rounded-xl" />
-                <p className="font-poppins text-items px-2 text-right text-xs">For inspiration only</p>
+                <p className="font-poppins text-items px-2 text-right text-xs">For color inspiration only</p>
               </div>
             </div>
 
