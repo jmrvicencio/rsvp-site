@@ -406,7 +406,7 @@ function App() {
                 <h4 className="mt-6 text-2xl font-bold">Principal Sponsors</h4>
                 <h5 className="mt-2 text-lg font-semibold">Ladies:</h5>
                 <p>Knee to Floor length Dress</p>
-                <h5 className="mt-2 text-lg font-semibold">Gentelemen:</h5>
+                <h5 className="mt-2 text-lg font-semibold">Gentlemen:</h5>
                 <p>Barong Tagalog and Black Pants</p>
 
                 <h4 className="mt-6 border-t border-black/20 pt-6 text-2xl font-bold">Guests</h4>
