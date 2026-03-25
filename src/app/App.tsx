@@ -353,7 +353,7 @@ function App() {
                 <img src={arugaImg} />
               )}
               <div>
-                <h3 className="font-libre-baskerville mb-1 text-2xl font-semibold text-black capitalize md:mt-5">Ceremony Venue</h3>
+                <h3 className="font-libre-baskerville mb-1 text-2xl font-semibold text-black capitalize md:mt-5">Reception Venue</h3>
                 <p>Aruga Apartments by Rockwell</p>
                 <a href="https://maps.app.goo.gl/cvjaYGtsLuF3TuXp6">
                   <p className="text-sm text-blue-900 underline">Google Maps Link</p>
