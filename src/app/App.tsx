@@ -12,10 +12,10 @@ import RSVP from './routes/Invite/RSVP';
 import WeddingParty from './routes/Invite/WeddingParty';
 
 import { Quote, Menu } from 'lucide-react';
-import coupleImg from '/images/couple.png';
+import coupleImg from '/images/RC206263-cropped.jpg';
 import donBoscoImg from '/images/don_bosco.png';
 import arugaImg from '/images/aruga.png';
-import storyOfUsImg from '/images/story-of-us.png';
+import storyOfUsImg from '/images/RC207590.jpg';
 import brownImg from '/images/brown.png';
 import greenImg from '/images/green.png';
 import mushroomImg from '/images/mushroom.png';
@@ -307,7 +307,7 @@ function App() {
         <section className="border-divider flex flex-col border-y py-8 md:grid md:grid-cols-17">
           <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
             <div className="mb-10 flex flex-col items-start gap-4 lg:flex-row">
-              <div className="text-items font-poppins w-full shrink grow-2 lg:w-1">
+              <div className="text-items font-poppins w-full shrink grow-3 lg:w-1">
                 <h3 className="font-libre-baskerville mb-5 text-3xl font-semibold text-black capitalize sm:text-4xl">
                   You're Cordially Invited To Share The Couple's Special Day
                 </h3>
