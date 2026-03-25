@@ -16,6 +16,9 @@ import coupleImg from '/images/RC206263-cropped.jpg';
 import donBoscoImg from '/images/don_bosco.png';
 import arugaImg from '/images/aruga.png';
 import storyOfUsImg from '/images/RC207590.jpg';
+import storyOfUsImg2 from '/images/RC206563.jpg';
+import storyOfUsImg3 from '/images/RC204696.jpg';
+import storyOfUsImg4 from '/images/RC205040.jpg';
 import brownImg from '/images/brown.png';
 import greenImg from '/images/green.png';
 import mushroomImg from '/images/mushroom.png';
@@ -365,7 +368,7 @@ function App() {
         </section>
         <Timeline />
         <section className="border-divider flex flex-col border-b py-8 md:grid md:grid-cols-17">
-          <div className="padding-4 col-span-12 flex flex-col pb-4 md:pr-4 md:pb-0">
+          <div className="padding-4 col-span-12 flex flex-col pb-12 md:pr-4 md:pb-0">
             <div ref={colorsRef} className="mb-10 flex flex-col items-start gap-4 py-16 sm:flex-row md:py-0">
               <div className="text-items font-poppins w-full shrink grow-2 sm:w-1">
                 <h3 className="font-libre-baskerville text-4xl font-semibold text-black capitalize sm:text-5xl">Our Colors</h3>
@@ -427,9 +430,9 @@ function App() {
                 <h3 className="font-libre-baskerville mb-12 flex flex-col justify-center text-center text-5xl/11 font-extrabold text-black capitalize sm:mb-5">
                   The
                   <br />
-                  <span className="">Journey</span>
+                  <span className="">Story</span>
                   <br />
-                  <span className="flex flex-row justify-center gap-2">
+                  <span className="-mt-9 flex flex-row justify-center gap-2">
                     <span className="font-alex-brush font-normal lowercase">of</span>Us
                   </span>
                 </h3>
@@ -452,10 +455,17 @@ function App() {
                   </p>
                 </div>
               </div>
-              <img src={storyOfUsImg} className="w-full shrink grow-3 lg:w-1" />
+              <div className="flex w-full grow-3 flex-col gap-3 lg:w-1">
+                <img src={storyOfUsImg} className="w-full" />
+                <div className="flex w-full flex-row gap-3">
+                  <img src={storyOfUsImg2} className="w-1 grow" />
+                  <img src={storyOfUsImg3} className="w-1 grow" />
+                </div>
+                <img src={storyOfUsImg4} className="w-full" />
+              </div>
             </div>
           </div>
-          <div className="border-divider text-items font-poppins col-span-5 border-t pt-4 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
+          <div className="border-divider text-items font-poppins col-span-5 border-t pt-12 pl-0 md:border-t-0 md:border-l md:pt-0 md:pl-4">
             <div ref={giftRef} className="mx-2 mb-10 flex flex-col gap-4 bg-gray-100 p-6">
               <h3 className="font-libre-baskerville text-center text-4xl font-semibold text-black capitalize italic">Gift Guide</h3>
               <p>
