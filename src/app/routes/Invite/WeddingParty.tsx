@@ -142,7 +142,7 @@ function WeddingParty() {
           </div>
           <div className="col-span-1 text-center">
             <h4 className="text-lg font-light uppercase sm:text-xl">Bible Bearer</h4>
-            <p>TBA</p>
+            <p>Martin Reyes</p>
           </div>
           <div className="col-span-1 text-center">
             <h4 className="text-lg font-light uppercase sm:text-xl">Ring Bearer</h4>
