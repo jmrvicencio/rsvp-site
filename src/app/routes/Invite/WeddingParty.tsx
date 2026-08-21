@@ -52,7 +52,7 @@ function WeddingParty() {
             </p>
             <p className="odd:text-right even:text-left">
               Abelardo
-              <br className="block sm:hidden" /> Pagsibigay, Jr.
+              <br className="block sm:hidden" /> Pagsibigan, Jr.
             </p>
             <p className="odd:text-right even:text-left">
               Carolyn
@@ -138,7 +138,7 @@ function WeddingParty() {
           </div>
           <div className="col-span-1 text-center">
             <h4 className="text-lg font-light uppercase sm:text-xl">Coin Bearer</h4>
-            <p>TBA</p>
+            <p>Jon Arvin Medalla</p>
           </div>
           <div className="col-span-1 text-center">
             <h4 className="text-lg font-light uppercase sm:text-xl">Bible Bearer</h4>
